@@ -7,4 +7,18 @@ meteor-platform
 autopublish
 insecure
 coffeescript
+accounts-password
+accounts-google
+email
+mquandalle:jade
+jquery
+less
+markdown
+underscore
+spiderable
+audit-argument-checks
+oauth-encryption
+mizzao:bootstrap-3
+useraccounts:bootstrap
+iron:router
 
