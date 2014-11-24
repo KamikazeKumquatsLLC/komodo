@@ -1,0 +1,11 @@
+<template name="dashboard">
+    {{> navbar}}
+    <div class="container">
+        <h1 class="page-header">All Quizzes</h1>
+        <ul>
+            {{#each quizzes}}
+                <li><a href="/view/{{_id}}">{{name}}</a> <small>(last modified {{ago lastmod}})</small></li>
+            {{/each}}
+        </ul>
+    </div>
+</template>

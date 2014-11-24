@@ -10,7 +10,6 @@ coffeescript
 accounts-password
 accounts-google
 email
-mquandalle:jade
 jquery
 less
 markdown
@@ -19,6 +18,6 @@ spiderable
 audit-argument-checks
 oauth-encryption
 mizzao:bootstrap-3
-useraccounts:bootstrap
 iron:router
-
+accounts-ui
+mrt:moment
