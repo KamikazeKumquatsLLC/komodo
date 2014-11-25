@@ -1,8 +1,10 @@
 Router.route '/dash', ->
-    #if Meteor.user()
+    @wait Meteor.subscribe "everything"
+    
+    if @ready()
         @render "dashboard"
-    #else
-    #    @redirect "/welcome"
+    else
+        @render "loading"
 
 if Meteor.isClient
     Template.dashboard.helpers

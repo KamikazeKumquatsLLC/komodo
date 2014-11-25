@@ -1,8 +1,10 @@
 Router.route "/view/:id", ->
-    #if not Meteor.user()
-    #    @redirect "/welcome"
-    #else
+    @wait Meteor.subscribe "everything"
+    
+    if @ready()
         @render "view", data: -> Quizzes.findOne @params.id
+    else
+        @render "loading"
 
 if Meteor.isClient
     Template.view.helpers

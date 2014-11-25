@@ -13,7 +13,7 @@ if Meteor.isClient
         Tracker.autorun (c) ->
             if Meteor.status().connected and Meteor.user() and Session.equals("loginSeen", no) and location.pathname is "/welcome"
                 powerLog "Helpfully bouncing just-logged-in user to dashboard"
-                location.href = "/dash"
+                Router.go "/dash"
                 Session.set "loginSeen", yes
             if Meteor.status().connected and not Meteor.user()
                 Session.set "loginSeen", no
