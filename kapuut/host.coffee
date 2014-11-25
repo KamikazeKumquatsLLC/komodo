@@ -33,7 +33,7 @@ if Meteor.isClient
                 here = location.origin + here
             encodeURIComponent here.replace("host", "play")
         count: -> getGame().players.length
-        name: makeProxy "name"
+        gamename: makeProxy "name"
         description: makeProxy "description"
     
     Template.hostquestion.helpers
