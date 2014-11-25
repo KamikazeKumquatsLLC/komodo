@@ -58,7 +58,6 @@ if Meteor.isClient
     
     Template.view.helpers
         correctIndicator: ->
-            console.log Template.currentData()
             correct = Template.parentData(1).correctAnswer is Template.parentData(1).answers.indexOf(Template.currentData())
             if correct
                 "plus"
