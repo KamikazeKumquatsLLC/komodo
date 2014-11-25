@@ -1,8 +1,16 @@
 <template name="host">
     <div class="container-fluid">
-        {{#unless begun}}
-            {{> prep}}
-        {{/unless}}
+        {{#if countdown}}
+            {{> fancyhostcountdown}}
+        {{else}}
+            {{#if begun}}
+                {{#with currentQuestion}}
+                    {{> hostquestion}}
+                {{/with}}
+            {{else}}
+                {{> prep}}
+            {{/if}}
+        {{/if}}
     </div>
 </template>
 
@@ -26,4 +34,29 @@
             </ul>
         </div>
     </div>
+</template>
+
+<template name="fancyhostcountdown">
+    <h1>{{countdown}}</h1>
+</template>
+
+<template name="hostquestion">
+    <div class="pull-right">
+        <h1>{{numAnswers}}/{{numPlayers}}
+            <button type="button" class="btn btn-primary btn-lg" id="reveal">Reveal <i class="fa fa-bar-chart fa-flip-llur-diagonal"></i></button>
+        </h1>
+    </div>
+    <h1>{{text}}</h1>
+    <h3>
+        <ul class="list-group">
+            {{#each answers}}
+                <li class="list-group-item">
+                    {{#if ../../revealed}}
+                        <span class="badge">{{count}}</span>
+                    {{/if}}
+                    {{.}}
+                </li>
+            {{/each}}
+        </ul>
+    </h3>
 </template>
