@@ -1,39 +1,37 @@
 @Quizzes = new Mongo.Collection "quizzes"
+@LiveGames = new Mongo.Collection "games"
 
 Router.configure layoutTemplate: 'layout'
 
-doRouting = ->
-    Router.route '/', ->
-        if Meteor.user()
-            powerLog "Dumping authenticated user to dashboard"
-            @redirect "/dash"
-        else
-            powerLog "Dumping unauthenticated user to welcome"
-            @redirect "/welcome"
+Router.route '/', ->
+    if Meteor.user()
+        @redirect "/dash"
+    else
+        @redirect "/welcome"
 
-    Router.route "/welcome", ->
-        powerLog "Giving user welcome"
-        @render "welcome"
+Router.route "/welcome", ->
+    @render "welcome"
 
-    Router.route '/dash', ->
-        if Meteor.user()
-            powerLog "Giving authenticated user dashboard"
-            @render "dashboard"
-        else
-            powerLog "Dumping unauthenticated user to welcome"
-            @redirect "/welcome"
+Router.route '/dash', ->
+    #if Meteor.user()
+        @render "dashboard"
+    #else
+    #    @redirect "/welcome"
 
-    Router.route "/view/:id", ->
-        if not Meteor.user()
-            powerLog "Dumping unauthenticated user to welcome"
-            @redirect "/welcome"
-        else
-            powerLog "Giving authenticated user view"
-            @render "view", data: -> Quizzes.findOne @params.id
-    , name: "view"
+Router.route "/view/:id", ->
+    #if not Meteor.user()
+    #    @redirect "/welcome"
+    #else
+        @render "view", data: -> Quizzes.findOne @params.id
+
+Router.route "/host/:id", ->
+    @render "host", data: -> Quizzes.findOne @params.id
+
+Router.route "/play/:shortid", ->
+    @layout ""
+    @render "play", data: -> LiveGames.findOne shortid: @params.shortid
 
 if Meteor.isClient
-    
     # counter starts at 0
     Session.setDefault "counter", 0
     
@@ -65,8 +63,6 @@ if Meteor.isClient
                 "minus"
     
     Meteor.startup ->
-        doRouting()
-        
         Session.setDefault "loginSeen", Meteor.user()?
         
         Tracker.autorun (c) ->
@@ -78,6 +74,5 @@ if Meteor.isClient
                 Session.set "loginSeen", no
 
 if Meteor.isServer
-    doRouting()
     Meteor.startup ->
         # do something
