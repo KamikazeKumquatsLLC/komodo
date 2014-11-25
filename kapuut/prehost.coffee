@@ -9,9 +9,9 @@ Router.route "/prehost/:id", ->
 if Meteor.isClient
     Template.prehost.events
         'click #begin': (evt) ->
-            shortid = Math.floor(Math.random() * 1000000)
+            shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
             while LiveGames.findOne({shortid: shortid})?
-                shortid = Math.floor(Math.random() * 1000000)
+                shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
             id = Router.current().params.id
             # make sure it goes in as a string to prevent massive headaches
             LiveGames.insert {quiz: id, shortid: "#{shortid}"}

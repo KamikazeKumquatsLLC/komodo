@@ -7,3 +7,9 @@
     right: 8px;
     left: inherit;
 }
+
+#player-qr-code {
+    display: block;
+    width: 100%;
+    height: auto;
+}

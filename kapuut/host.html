@@ -1,5 +1,29 @@
 <template name="host">
-    <div class="container">
-        <h1 class="page-header">{{playurl}} <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{encplayurl}}&choe=UTF-8&chld=H"></h1>
+    <div class="container-fluid">
+        {{#unless begun}}
+            {{> prep}}
+        {{/unless}}
+    </div>
+</template>
+
+<template name="prep">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">{{name}} <small>{{playurl}}</small></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{encplayurl}}&choe=UTF-8&chld=H" id="player-qr-code">
+        </div>
+        <div class="col-md-9">
+            <button type="button" class="btn btn-primary btn-lg pull-right" id="begin">Begin <i class="fa fa-chevron-right"></i></button>
+            <h1>Players ({{count}})</h1>
+            <ul>
+                {{#each players}}
+                <li>{{name}}</li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
 </template>

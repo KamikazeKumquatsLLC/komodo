@@ -8,15 +8,10 @@ insecure
 coffeescript
 accounts-password
 accounts-google
-email
 jquery
-less
-markdown
-underscore
-spiderable
-audit-argument-checks
-oauth-encryption
 mizzao:bootstrap-3
 iron:router
 accounts-ui
 mrt:moment
+underscore
+

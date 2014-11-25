@@ -1,5 +1,36 @@
 <template name="play">
-    <div class="container">
-        <h1 class="page-header">Playing {{name}}</h1>
+    <div class="container-fluid">
+        <h1 class="page-header">{{name}}</h1>
+        {{#if playername}}
+            {{#if begun}}
+            {{else}}
+                {{> reviewplayername}}
+            {{/if}}
+        {{else}}
+            {{> enterplayername}}
+        {{/if}}
     </div>
+</template>
+
+<template name="enterplayername">
+    <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-lg" type="button" id="generate"><i class="fa fa-refresh fa-lg"></i></button>
+            </span>
+            <input type="text" class="form-control input-lg" placeholder="Pick a name..." id="playername">
+            <span class="input-group-btn">
+                <button class="btn btn-default btn-lg" type="button" id="accept"><i class="fa fa-play fa-lg"></i></button>
+            </span>
+        </div>
+    </div>
+    <div class="col-xs-0 col-sm-1 col-md-2 col-lg-3"></div>
+</template>
+
+<template name="reviewplayername">
+    <p class="lead">
+        Your name is {{playername}}.
+        If this isn't OK, <button class="btn btn-warning" type="button" id="reset"><i class="fa fa-refresh"></i> reset</button>.
+    </p>
 </template>

@@ -36,8 +36,6 @@ if Meteor.isServer
     Meteor.publish "everything", -> [Quizzes.find({}), LiveGames.find({})]
     Meteor.publish "quizPlay", (shortid) ->
         check(shortid, String)
-        console.log "Getting quiz for game ##{shortid}"
-        game = LiveGames.findOne()# {shortid: shortid})
-        console.log "Found game #{game}"
+        game = LiveGames.findOne({shortid: shortid})
         quizId = game.quiz
         return [Quizzes.find(quizId), LiveGames.find({shortid: shortid})]

@@ -2,29 +2,34 @@ Router.route "/play/:shortid", ->
     @wait Meteor.subscribe "quizPlay", @params.shortid
     
     if @ready()
-        console.log @params.shortid
-        console.log LiveGames.findOne(shortid: @params.shortid)
         @layout ""
+        Session.set "shortid", @params.shortid
         @render "play", data: -> LiveGames.findOne shortid: @params.shortid
     else
         @render "loading"
 
 if Meteor.isClient
+    makeProxy = (attr) -> ->
+        if Template.currentData()[attr]?
+            Template.currentData()[attr]
+        else
+            Quizzes.findOne(Template.currentData().quiz)[attr]
+    
+    Template.registerHelper "playername", ->
+        _.filter(LiveGames.findOne(shortid: Session.get("shortid")).players, ({id, name}) -> id is Session.get("playerid"))[0]?.name
+    
     Template.play.helpers
-        name: ->
-            if Template.currentData().name?
-                Template.currentData().name
-            else
-                Quizzes.findOne(Template.currentData().quiz).name
+        name: makeProxy "name"
     
     Template.play.events
-        'click #begin': (evt) ->
-            # this is complicated
-            shortid = Math.floor(Math.random() * 1000000)
-            while LiveGames.findOne({shortid: shortid})?
-                shortid = Math.floor(Math.random() * 1000000)
-            id = Router.current().params.id
-            LiveGames.insert {quiz: id, shortid: shortid}
-            Router.go "/play/#{shortid}"
-            # don't follow the link
-            return no
+        'click #generate': (evt) ->
+            index = Math.floor(Math.random() * SAMPLE_NAMES.length)
+            $("#playername").val(SAMPLE_NAMES[index])
+        'click #accept': (evt) ->
+            Session.setDefault("playerid", Math.random())
+            gameid = LiveGames.findOne({shortid: Session.get("shortid")})._id
+            LiveGames.update gameid, {$pull: {players: id: Session.get("playerid")}}
+            LiveGames.update gameid, {$push: players: {id: Session.get("playerid"), name: $("#playername").val()}}
+        'click #reset': (evt) ->
+            gameid = LiveGames.findOne({shortid: Session.get("shortid")})._id
+            LiveGames.update gameid, {$pull: {players: id: Session.get("playerid")}}
