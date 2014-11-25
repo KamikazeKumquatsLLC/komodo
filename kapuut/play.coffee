@@ -51,5 +51,7 @@ if Meteor.isClient
             answerList = Template.currentData().answers
             answer = answerList.indexOf(selectedAnswer)
             console.log "Answering #{answer}"
-            LiveGames.update Session.get("gameid"), {$push: "answers.0": {id: Session.get("playerid"), answer: answer}}
+            modifier = $push: {}
+            modifier.$push["answers.#{getGame().question}"] = {id: Session.get("playerid"), answer: answer}
+            LiveGames.update Session.get("gameid"), modifier
             no

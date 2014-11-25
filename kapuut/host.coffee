@@ -42,6 +42,22 @@ if Meteor.isClient
         count: ->
             index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
             _.filter(getGame().answers[getGame().question], ({answer}) -> answer is index).length
+        color: ->
+            index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
+            if getQuiz().questions[getGame().question].correctAnswer is index
+                "success"
+            else
+                "danger"
+        guessers: ->
+            index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
+            tmp = _.chain(getGame().answers[getGame().question])
+            tmp = tmp.where(answer: index)
+            tmp = tmp.map(({id}) -> _.findWhere(getGame().players, id: id))
+            tmp = tmp.compact() # remove falsy values
+            tmp = tmp.pluck("name")
+            tmp.value()
+        answerable: -> getQuiz().questions[getGame().question].answers?
+        last: -> getQuiz().questions.length - 1 is getGame().question
     
     Template.prep.events
         'click #begin': (evt) ->
@@ -59,3 +75,13 @@ if Meteor.isClient
         "click #reveal": (evt) ->
             gameid = getGame()._id
             LiveGames.update gameid, $set: revealed: yes
+        "click #advance": (evt) ->
+            gameid = getGame()._id
+            LiveGames.update gameid, $set: {revealed: no, countdown: 5}
+            updateInterval = 0
+            update = ->
+                LiveGames.update gameid, $inc: countdown: -1
+                if getGame().countdown <= 0
+                    Meteor.clearInterval updateInterval
+                    LiveGames.update gameid, {$inc: {question: 1}, $push: answers: []}
+            updateInterval = Meteor.setInterval update, 1000

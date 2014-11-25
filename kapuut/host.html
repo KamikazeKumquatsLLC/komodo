@@ -42,19 +42,47 @@
 
 <template name="hostquestion">
     <div class="pull-right">
-        <h1>{{numAnswers}}/{{numPlayers}}
-            <button type="button" class="btn btn-primary btn-lg" id="reveal">Reveal <i class="fa fa-bar-chart fa-flip-llur-diagonal"></i></button>
+        <h1>
+            {{#if answerable}}
+                {{numAnswers}}/{{numPlayers}}
+            {{/if}}
+            {{#if answerable}}
+                {{#if ../revealed}}
+                    {{#if last}}
+                        <button type="button" class="btn btn-primary btn-lg" id="end">End <i class="fa fa-sign-out"></i></button>
+                    {{else}}
+                        <button type="button" class="btn btn-primary btn-lg" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
+                    {{/if}}
+                {{else}}
+                    <button type="button" class="btn btn-primary btn-lg" id="reveal">Reveal <i class="fa fa-bar-chart fa-flip-llur-diagonal"></i></button>
+                {{/if}}
+            {{else}}
+                {{#if last}}
+                    <button type="button" class="btn btn-primary btn-lg" id="end">End <i class="fa fa-sign-out"></i></button>
+                {{else}}
+                    <button type="button" class="btn btn-primary btn-lg" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
+                {{/if}}
+            {{/if}}
         </h1>
     </div>
     <h1>{{text}}</h1>
     <h3>
         <ul class="list-group">
             {{#each answers}}
-                <li class="list-group-item">
+                <li class="list-group-item {{#if ../../revealed}}{{#if ../correctAnswer}}list-group-item-{{color}}{{/if}}{{/if}}">
                     {{#if ../../revealed}}
                         <span class="badge">{{count}}</span>
                     {{/if}}
                     {{.}}
+                    {{#if ../../revealed}}
+                        {{#if count}}
+                            <ul>
+                                {{#each guessers}}
+                                    <li>{{.}}</li>
+                                {{/each}}
+                            </ul>
+                        {{/if}}
+                    {{/if}}
                 </li>
             {{/each}}
         </ul>
