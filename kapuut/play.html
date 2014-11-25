@@ -5,12 +5,16 @@
         {{else}}
             {{#if playername}}
                 {{#if begun}}
-                    {{#if answered}}
-                        {{> reviewAnswer}}
+                    {{#if over}}
+                        {{> results}}
                     {{else}}
-                        {{#with currentQuestion}}
-                            {{> question}}
-                        {{/with}}
+                        {{#if answered}}
+                            {{> reviewAnswer}}
+                        {{else}}
+                            {{#with currentQuestion}}
+                                {{> question}}
+                            {{/with}}
+                        {{/if}}
                     {{/if}}
                 {{else}}
                     {{> reviewplayername}}
@@ -65,4 +69,8 @@
 
 <template name="reviewAnswer">
     <h1>You answered the question!</h1>
+</template>
+
+<template name="results">
+    <h1>Your Results</h1>
 </template>

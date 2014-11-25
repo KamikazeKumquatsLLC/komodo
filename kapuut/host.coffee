@@ -85,3 +85,6 @@ if Meteor.isClient
                     Meteor.clearInterval updateInterval
                     LiveGames.update gameid, {$inc: {question: 1}, $push: answers: []}
             updateInterval = Meteor.setInterval update, 1000
+        "click #end": (evt) ->
+            gameid = getGame()._id
+            LiveGames.update gameid, $set: over: yes

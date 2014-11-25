@@ -4,9 +4,13 @@
             {{> fancyhostcountdown}}
         {{else}}
             {{#if begun}}
-                {{#with currentQuestion}}
-                    {{> hostquestion}}
-                {{/with}}
+                {{#if over}}
+                    {{> hoststats}}
+                {{else}}
+                    {{#with currentQuestion}}
+                        {{> hostquestion}}
+                    {{/with}}
+                {{/if}}
             {{else}}
                 {{> prep}}
             {{/if}}
@@ -87,4 +91,8 @@
             {{/each}}
         </ul>
     </h3>
+</template>
+
+<template name="hoststats">
+    <h1>Statistics</h1>
 </template>
