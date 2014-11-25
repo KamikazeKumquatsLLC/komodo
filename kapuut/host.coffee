@@ -62,7 +62,7 @@ if Meteor.isClient
     Template.prep.events
         'click #begin': (evt) ->
             gameid = getGame()._id
-            LiveGames.update gameid, $set: {begun: yes, countdown: 5}
+            LiveGames.update gameid, $set: {begun: yes, countdown: 5, answers: []}
             updateInterval = 0
             update = ->
                 LiveGames.update gameid, $inc: countdown: -1
@@ -88,3 +88,20 @@ if Meteor.isClient
         "click #end": (evt) ->
             gameid = getGame()._id
             LiveGames.update gameid, $set: over: yes
+    
+    Template.hoststats.helpers
+        top5players: ->
+            correctAnswers = _(getQuiz().questions).pluck "correctAnswer"
+            total = _.compact(correctAnswers).length
+            _(getGame().players).chain()
+                .map(({name, id}) -> name: name, answers: _.map getGame().answers, (list) -> _.findWhere list, id: id)
+                .map(({name, answers}) -> name: name, answers: _.zip(correctAnswers, _.map(answers, (x) -> x?.answer)))
+                .map(({name, answers}) -> name: name, correct: _.filter(answers, ([correct, mine]) -> mine? and correct? and correct is mine).length)
+                .map(({name, correct}) -> name: name, pct: Math.round(10000*correct/total)/100)
+                .sortBy(({name, pct}) -> -pct)
+                .first(5)
+                .value()
+    
+    Template.hoststats.events
+        "click #exit": (evt) ->
+            LiveGames.remove(getGame()._id)

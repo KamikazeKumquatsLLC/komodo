@@ -1,27 +1,31 @@
 <template name="play">
     <div class="container-fluid">
-        {{#if countdown}}
-            {{> fancycountdown}}
-        {{else}}
-            {{#if playername}}
-                {{#if begun}}
-                    {{#if over}}
-                        {{> results}}
-                    {{else}}
-                        {{#if answered}}
-                            {{> reviewAnswer}}
+        {{#if .}}
+            {{#if countdown}}
+                {{> fancycountdown}}
+            {{else}}
+                {{#if playername}}
+                    {{#if begun}}
+                        {{#if over}}
+                            {{> results}}
                         {{else}}
-                            {{#with currentQuestion}}
-                                {{> question}}
-                            {{/with}}
+                            {{#if answered}}
+                                {{> reviewAnswer}}
+                            {{else}}
+                                {{#with currentQuestion}}
+                                    {{> question}}
+                                {{/with}}
+                            {{/if}}
                         {{/if}}
+                    {{else}}
+                        {{> reviewplayername}}
                     {{/if}}
                 {{else}}
-                    {{> reviewplayername}}
+                    {{> enterplayername}}
                 {{/if}}
-            {{else}}
-                {{> enterplayername}}
             {{/if}}
+        {{else}}
+            <img src="http://mrwgifs.com/wp-content/uploads/2013/09/Its-Over-Go-Home-Ferris-Buller-Gif.gif">
         {{/if}}
     </div>
 </template>
@@ -73,4 +77,5 @@
 
 <template name="results">
     <h1>Your Results</h1>
+    <h2>You got {{correct}}/{{total}}={{pct}}%</h2>
 </template>
