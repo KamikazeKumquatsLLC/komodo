@@ -10,7 +10,7 @@
             {{#each questions}}
                 <li>
                     <p>{{text}}</p>
-                    {{#if correctAnswer}}
+                    {{#if hasCorrectAnswer}}
                         <ul class="fa-ul">
                             {{#each answers}}
                                 <li><i class="fa fa-li fa-{{correctIndicator}}-square"></i>{{.}}</li>

@@ -1,6 +1,9 @@
 <template name="dashboard">
     <div class="container">
-        <h1 class="page-header">All Quizzes</h1>
+        <h1 class="page-header">
+            All Quizzes
+            <button type="button" class="btn btn-success btn-lg" id="new">New <i class="fa fa-plus"></i></button>
+        </h1>
         <ul class="list-unstyled">
             {{#each quizzes}}
                 <li>

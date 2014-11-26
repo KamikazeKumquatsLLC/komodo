@@ -9,3 +9,8 @@ Router.route '/dash', ->
 if Meteor.isClient
     Template.dashboard.helpers
         quizzes: -> Quizzes.find {}
+    
+    Template.dashboard.events
+        "click #new": (evt) ->
+            id = Quizzes.insert({name: "New Quiz",lastmod: new Date()})
+            Router.go "/edit/#{id}"

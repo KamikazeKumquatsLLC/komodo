@@ -26,7 +26,7 @@ if Meteor.isServer
         if Quizzes.find({}).count() is 0
             Quizzes.insert
                 "description":"A sample quiz of awesomeness."
-                "lastmod":"2014-11-24T20:41:57.425Z"
+                "lastmod":new Date()
                 "name":"hi"
                 "questions": [
                     {"text":"Do you even?","answers":["No","Yes"],"correctAnswer":1}

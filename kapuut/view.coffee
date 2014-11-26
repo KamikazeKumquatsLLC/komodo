@@ -8,6 +8,7 @@ Router.route "/view/:id", ->
 
 if Meteor.isClient
     Template.view.helpers
+        hasCorrectAnswer: -> _.isNumber Template.currentData().correctAnswer
         correctIndicator: ->
             correct = Template.parentData(1).correctAnswer is Template.parentData(1).answers.indexOf(Template.currentData())
             if correct
