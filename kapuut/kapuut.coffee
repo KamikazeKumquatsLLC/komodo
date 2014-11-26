@@ -22,7 +22,29 @@ if Meteor.isClient
                 "active"
 
 if Meteor.isServer
+    Quizzes.allow
+        insert: (userId, doc) -> userId and doc.owner is userId
+        update: (userId, doc, fields, modifier) -> doc.owner is userId
+        remove: (userId, doc) -> doc.owner is userId
+        fetch: ["owner"]
+    
+    Quizzes.deny
+        update: (userId, doc, fields, modifier) -> _.contains fields, "owner"
+        fetch: []
+    
+    LiveGames.allow
+        insert: (userId, doc) -> userId and _.isObject Quizzes.findOne doc.quiz
+        update: (userId, doc, fields, modifier) -> userId and yes
+        remove: (userId, doc) -> userId and yes
+        fetch: []
+    
+    LiveGames.deny
+        insert: (userId, doc) -> _.isObject(LiveGames.findOne(shortid: doc.shortid))
+        update: (userId, doc, fields, modifier) -> _.contains fields, "quiz"
+        fetch: []
+    
     Meteor.startup ->
+        ###
         if Quizzes.find({}).count() is 0
             Quizzes.insert
                 "description":"A sample quiz of awesomeness."
@@ -33,6 +55,7 @@ if Meteor.isServer
                     {"text":"Do you know how it works?","answers":["No","Yes"]}
                     {"text":"There's always more to learn."}
                 ]
+        ###
     Meteor.publish "allQuizzes", -> Quizzes.find owner: @userId
     Meteor.publish "quiz", (id) -> Quizzes.find id
     Meteor.publish "gameIDs", -> LiveGames.find({}, {fields: shortid: 1})
