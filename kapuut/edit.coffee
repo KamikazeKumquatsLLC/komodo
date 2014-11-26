@@ -1,5 +1,5 @@
 Router.route "/edit/:id", ->
-    @wait Meteor.subscribe "everything"
+    @wait Meteor.subscribe "allQuizzes"
     
     if @ready()
         Session.set "quizid", @params.id
@@ -108,6 +108,9 @@ if Meteor.isClient
                     if _(oldQuestion).has("answers")
                         modifier.$unset["questions.#{Session.get("selectedQuestion")}.answers"] = yes
             Quizzes.update getQuiz()._id, modifier
+        "click #deleteQuiz": (evt) ->
+            Quizzes.remove getQuiz()._id
+            Router.go "/dash"
     
     Meteor.startup ->
         Session.setDefault "selectedQuestion", 0

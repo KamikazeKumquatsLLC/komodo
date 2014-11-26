@@ -1,5 +1,6 @@
 Router.route "/prehost/:id", ->
-    @wait Meteor.subscribe "everything"
+    @wait Meteor.subscribe "quiz", @params.id
+    @wait Meteor.subscribe "gameIDs"
     
     if @ready()
         @render "prehost", data: -> Quizzes.findOne @params.id

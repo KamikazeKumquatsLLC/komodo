@@ -1,5 +1,5 @@
 Router.route "/view/:id", ->
-    @wait Meteor.subscribe "everything"
+    @wait Meteor.subscribe "quiz", @params.id
     
     if @ready()
         @render "view", data: -> Quizzes.findOne @params.id

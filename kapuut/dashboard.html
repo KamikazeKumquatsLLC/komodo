@@ -10,7 +10,7 @@
                     <h2><a href="/view/{{_id}}">{{name}}</a></h2>
                     <p>{{description}}</p>
                     {{#each questions}}
-                        {{#if correctAnswer}}
+                        {{#if hasCorrectAnswer}}
                             <i class="fa fa-question-circle"></i>
                         {{else}}
                             {{#if answers}}

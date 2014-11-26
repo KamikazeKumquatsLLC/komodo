@@ -1,5 +1,5 @@
 Router.route "/host/:shortid", ->
-    @wait Meteor.subscribe "everything"
+    @wait Meteor.subscribe "quizPlay", @params.shortid
     
     if @ready()
         @layout ""
@@ -105,3 +105,4 @@ if Meteor.isClient
     Template.hoststats.events
         "click #exit": (evt) ->
             LiveGames.remove(getGame()._id)
+            Router.go "/dash"

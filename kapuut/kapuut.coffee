@@ -29,11 +29,13 @@ if Meteor.isServer
                 "lastmod":new Date()
                 "name":"hi"
                 "questions": [
-                    {"text":"Do you even?","answers":["No","Yes"],"correctAnswer":1}
-                    {"text":"Are you sure?","answers":["No","Yes"]}
-                    {"text":"That's interesting."}
+                    {"text":"Do you know that Kapuut exists?","answers":["No","Yes"],"correctAnswer":1}
+                    {"text":"Do you know how it works?","answers":["No","Yes"]}
+                    {"text":"There's always more to learn."}
                 ]
-    Meteor.publish "everything", -> [Quizzes.find({}), LiveGames.find({})]
+    Meteor.publish "allQuizzes", -> Quizzes.find owner: @userId
+    Meteor.publish "quiz", (id) -> Quizzes.find id
+    Meteor.publish "gameIDs", -> LiveGames.find({}, {fields: shortid: 1})
     Meteor.publish "quizPlay", (shortid) ->
         check(shortid, String)
         game = LiveGames.findOne({shortid: shortid})
