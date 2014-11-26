@@ -61,14 +61,12 @@
 </template>
 
 <template name="question">
-    <h1>{{text}}</h1>
-    <h3>
-        <div class="list-group">
-            {{#each answers}}
-                <a class="list-group-item answer" href="#">{{.}}</a>
-            {{/each}}
-        </div>
-    </h3>
+    {{#markdown}}{{text}}{{/markdown}}
+    <div class="list-group">
+        {{#each answers}}
+            <a class="list-group-item answer" data-original="{{.}}" href="#">{{.}}</a>
+        {{/each}}
+    </div>
 </template>
 
 <template name="reviewAnswer">

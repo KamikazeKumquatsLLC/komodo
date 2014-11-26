@@ -46,7 +46,7 @@
 
 <template name="hostquestion">
     <div class="pull-right">
-        <h1>
+        <h3>
             {{#if answerable}}
                 {{numAnswers}}/{{numPlayers}}
             {{/if}}
@@ -67,30 +67,29 @@
                     <button type="button" class="btn btn-primary btn-lg" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
                 {{/if}}
             {{/if}}
-        </h1>
+        </h3>
     </div>
-    <h1>{{text}}</h1>
-    <h3>
-        <ul class="list-group">
-            {{#each answers}}
-                <li class="list-group-item {{#if ../../revealed}}{{#if ../correctAnswer}}list-group-item-{{color}}{{/if}}{{/if}}">
-                    {{#if ../../revealed}}
-                        <span class="badge">{{count}}</span>
+    <h3 class="invisible"><button class="btn btn-sm"></button></h3>
+    {{#markdown}}{{text}}{{/markdown}}
+    <ul class="list-group">
+        {{#each answers}}
+            <li class="list-group-item {{#if ../../revealed}}list-group-item-{{color}}{{/if}}">
+                {{#if ../../revealed}}
+                    <span class="badge">{{count}}</span>
+                {{/if}}
+                {{.}}
+                {{#if ../../revealed}}
+                    {{#if count}}
+                        <ul>
+                            {{#each guessers}}
+                                <li>{{.}}</li>
+                            {{/each}}
+                        </ul>
                     {{/if}}
-                    {{.}}
-                    {{#if ../../revealed}}
-                        {{#if count}}
-                            <ul>
-                                {{#each guessers}}
-                                    <li>{{.}}</li>
-                                {{/each}}
-                            </ul>
-                        {{/if}}
-                    {{/if}}
-                </li>
-            {{/each}}
-        </ul>
-    </h3>
+                {{/if}}
+            </li>
+        {{/each}}
+    </ul>
 </template>
 
 <template name="hoststats">

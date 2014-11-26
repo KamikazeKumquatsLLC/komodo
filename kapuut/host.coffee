@@ -44,10 +44,13 @@ if Meteor.isClient
             _.filter(getGame().answers[getGame().question], ({answer}) -> answer is index).length
         color: ->
             index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
-            if getQuiz().questions[getGame().question].correctAnswer is index
-                "success"
+            if _.isNumber getQuiz().questions[getGame().question].correctAnswer
+                if getQuiz().questions[getGame().question].correctAnswer is index
+                    "success"
+                else
+                    "danger"
             else
-                "danger"
+                "info"
         guessers: ->
             index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
             tmp = _.chain(getGame().answers[getGame().question])
@@ -92,7 +95,7 @@ if Meteor.isClient
     Template.hoststats.helpers
         top5players: ->
             correctAnswers = _(getQuiz().questions).pluck "correctAnswer"
-            total = _.compact(correctAnswers).length
+            total = _.filter(correctAnswers, _.isNumber).length
             _(getGame().players).chain()
                 .map(({name, id}) -> name: name, answers: _.map getGame().answers, (list) -> _.findWhere list, id: id)
                 .map(({name, answers}) -> name: name, answers: _.zip(correctAnswers, _.map(answers, (x) -> x?.answer)))

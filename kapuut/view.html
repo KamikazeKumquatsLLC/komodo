@@ -9,7 +9,7 @@
         <ol>
             {{#each questions}}
                 <li>
-                    <p>{{text}}</p>
+                    {{#markdown}}{{text}}{{/markdown}}
                     {{#if hasCorrectAnswer}}
                         <ul class="fa-ul">
                             {{#each answers}}

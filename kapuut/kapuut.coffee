@@ -34,7 +34,7 @@ if Meteor.isServer
     
     LiveGames.allow
         insert: (userId, doc) -> userId and _.isObject Quizzes.findOne doc.quiz
-        update: (userId, doc, fields, modifier) -> userId and yes
+        update: (userId, doc, fields, modifier) -> userId or _.without(fields, "players", "answers").length is 0
         remove: (userId, doc) -> userId and yes
         fetch: []
     
@@ -43,6 +43,18 @@ if Meteor.isServer
         update: (userId, doc, fields, modifier) -> _.contains fields, "quiz"
         fetch: []
     
+    Accounts.onCreateUser (options, user) ->
+        Quizzes.insert
+            "description":"A sample quiz of awesomeness."
+            "lastmod":new Date()
+            "name":"Sample Quiz"
+            owner: user._id
+            "questions": [
+                {"text":"Do you know that Kapuut exists?","answers":["No","Yes"],"correctAnswer":1}
+                {"text":"Do you know how it works?","answers":["No","Yes"]}
+                {"text":"There's always more to learn."}
+            ]
+        return user
     Meteor.startup ->
         ###
         if Quizzes.find({}).count() is 0

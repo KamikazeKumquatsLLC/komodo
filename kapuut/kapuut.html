@@ -1,18 +1,12 @@
 <head>
     <title>Kapuut</title>
-    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
 </head>
 
 <template name="navbar">
     <nav role="navigation" class="navbar navbar-default">
         <div class="navbar-header">
-            <button type="button" data-toggle="collapse" data-target="navbar" aria-expanded="false" aria-controls="navbar" class="navbar-toggle collapsed">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a href="#" class="navbar-brand">Kapuut</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
@@ -23,7 +17,6 @@
                     {{link "/welcome" "Welcome"}}
                 {{/if}}
                 {{link "/about" "About"}}
-                {{link "/contact" "Contact"}}
             </ul>
             <div class="navbar-right navbar-text">{{> loginButtons}}</div>
         </div>

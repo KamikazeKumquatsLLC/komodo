@@ -1,8 +1,10 @@
 Router.route "/edit/:id", ->
-    @wait Meteor.subscribe "allQuizzes"
+    @wait Meteor.subscribe "quiz", @params.id
     
     if @ready()
         Session.set "quizid", @params.id
+        if Quizzes.findOne(@params.id).owner isnt Meteor.userId()
+            @redirect "/view/#{@params.id}"
         @render "edit", data: -> Quizzes.findOne @params.id
     else
         @render "loading"
@@ -52,6 +54,29 @@ if Meteor.isClient
             Quizzes.update getQuiz()._id, $pull: questions: {NeedsDeleting:yes}
             Session.set "selectedQuestion", Session.get("selectedQuestion") - 1
     
+    Template.edit.rendered = ->
+        # This lock was a pain to figure out.
+        # Since setValue() fires "change", we need to avoid saving partially loaded text.
+        # Since Quizzes.update changes getQuestion(), we need to avoid setting the text we just saved and resetting the cursor position.
+        locked = no
+        questionEditor = ace.edit "questionEdit"
+        questionEditor.setTheme("ace/theme/clouds")
+        questionEditor.getSession().setMode("ace/mode/markdown")
+        questionEditor.getSession().on "change", (evt) ->
+            unless locked
+                locked = yes
+                setOperator = lastmod: new Date()
+                setOperator["questions.#{Session.get("selectedQuestion")}.text"] = questionEditor.getValue()
+                Quizzes.update getQuiz()._id, $set: setOperator
+        
+        Tracker.autorun ->
+            if locked
+                console.log getQuestion()
+            else
+                locked = yes
+                questionEditor.setValue getQuestion().text, 1
+            locked = no
+    
     quizPropChange = (selector, name) ->
         result = {}
         result["change #{selector}"] = (evt) ->
@@ -64,10 +89,6 @@ if Meteor.isClient
     quizPropChange "#inputDescription", "description"
     
     Template.edit.events
-        "change #inputQuestion": (evt) ->
-            setOperator = lastmod: new Date()
-            setOperator["questions.#{Session.get("selectedQuestion")}.text"] = $("#inputQuestion").val()
-            Quizzes.update getQuiz()._id, $set: setOperator
         "change .inputCorrect": (evt) ->
             setOperator = lastmod: new Date()
             setOperator["questions.#{Session.get("selectedQuestion")}.correctAnswer"] = parseInt(evt.target.id.replace("inputCorrect", "")) - 1

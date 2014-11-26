@@ -47,16 +47,17 @@ if Meteor.isClient
     
     Template.question.events
         "click .answer": (evt) ->
-            selectedAnswer = evt.currentTarget.innerText
+            selectedAnswer = evt.currentTarget.dataset.original
             answerList = Template.currentData().answers
             answer = answerList.indexOf(selectedAnswer)
+            console.log "Answering #{answer}"
             modifier = $push: {}
             modifier.$push["answers.#{getGame().question}"] = {id: Session.get("playerid"), answer: answer}
             LiveGames.update Session.get("gameid"), modifier
             no
     
     correct = -> _.filter(_.zip(_(getQuiz().questions).pluck("correctAnswer"), _.map(getGame().answers, (list) -> _.findWhere(list, id: Session.get("playerid"))?.answer)), ([correct, mine]) -> mine? and correct? and correct is mine).length
-    total = -> _(getQuiz().questions).chain().pluck("correctAnswer").compact().value().length
+    total = -> _(getQuiz().questions).chain().pluck("correctAnswer").filter(_.isNumber).value().length
     
     Template.results.helpers
         correct: correct
