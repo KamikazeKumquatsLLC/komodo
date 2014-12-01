@@ -74,7 +74,9 @@ if Meteor.isClient
                 console.log getQuestion()
             else
                 locked = yes
+                position = questionEditor.getCursorPosition()
                 questionEditor.setValue getQuestion().text, 1
+                questionEditor.moveCursorToPosition position
             locked = no
     
     quizPropChange = (selector, name) ->
