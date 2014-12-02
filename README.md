@@ -3,7 +3,7 @@ kapuut
 
 Realtime classroom quizzing for power users.
 
-Task list on [Trello](https://trello.com/b/W7uZM7Yd/kapuut).
+Task list on [Waffle](https://waffle.io/kamikazekumquatsllc/kapuut).
 
 Development
 -----------
