@@ -31,17 +31,23 @@ if Meteor.isClient
     
     Template.enterplayername.helpers
         name: makeProxy "name"
+        oldnames: -> JSON.parse localStorage.getItem "oldnames"
     
-    Template.play.events
+    Template.enterplayername.events
         'click #generate': (evt) ->
             index = Math.floor(Math.random() * SAMPLE_NAMES.length)
             $("#playername").val(SAMPLE_NAMES[index])
         'click #accept': (evt) ->
+            localStorage.setItem "oldnames", JSON.stringify _.compact _.union [$("#playername").val()], JSON.parse localStorage.getItem "oldnames"
             Session.setDefault("playerid", Math.random())
             LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
             LiveGames.update Session.get("gameid"), {$push: players: {id: Session.get("playerid"), name: $("#playername").val()}}
             window.addEventListener "beforeunload", ->
                 LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
+        'click .oldname': (evt) ->
+            $("#playername").val(evt.currentTarget.innerText)
+    
+    Template.play.events
         'click #reset': (evt) ->
             LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
     
