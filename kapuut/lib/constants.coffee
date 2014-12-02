@@ -1,4 +1,4 @@
-@SHORTID_DIGITS = 1
+@SHORTID_DIGITS = 6
 
 @SAMPLE_NAMES = [
     "ಠ_ಠ"
