@@ -15,7 +15,7 @@ if Meteor.isClient
                 shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
             id = Router.current().params.id
             # make sure it goes in as a string to prevent massive headaches
-            LiveGames.insert {quiz: id, shortid: "#{shortid}", players: [], answers: [[]]}
+            LiveGames.insert {quiz: id, shortid: "#{shortid}", players: [], answers: [[]], owner: Meteor.userId()}
             Router.go "/host/#{shortid}"
             # don't follow the link
             return no

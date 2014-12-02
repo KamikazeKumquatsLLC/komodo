@@ -33,14 +33,14 @@ if Meteor.isServer
         fetch: []
     
     LiveGames.allow
-        insert: (userId, doc) -> userId and _.isObject Quizzes.findOne doc.quiz
-        update: (userId, doc, fields, modifier) -> userId or _.without(fields, "players", "answers").length is 0
-        remove: (userId, doc) -> userId and yes
+        insert: (userId, doc) -> userId and _.isObject(Quizzes.findOne(doc.quiz)) and doc.owner is userId
+        update: (userId, doc, fields, modifier) -> (userId is doc.owner) or _.without(fields, "players", "answers").length is 0
+        remove: (userId, doc) -> userId is doc.owner
         fetch: []
     
     LiveGames.deny
         insert: (userId, doc) -> _.isObject(LiveGames.findOne(shortid: doc.shortid))
-        update: (userId, doc, fields, modifier) -> _.contains fields, "quiz"
+        update: (userId, doc, fields, modifier) -> _.contains fields, "quiz" or _.contains fields, "owner"
         fetch: []
     
     Accounts.onCreateUser (options, user) ->
