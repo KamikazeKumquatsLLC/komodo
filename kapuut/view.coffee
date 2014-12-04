@@ -15,3 +15,10 @@ if Meteor.isClient
                 "plus"
             else
                 "minus"
+    
+    Template.view.events
+        "click #duplicate": (evt) ->
+            quiz = Template.currentData()
+            id = Quizzes.insert _.extend _.omit(quiz, "_id"), owner: Meteor.userId(), lastmod: new Date()
+            Router.go "/edit/#{id}"
+            no
