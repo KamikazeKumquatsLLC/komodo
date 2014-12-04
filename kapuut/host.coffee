@@ -109,3 +109,11 @@ if Meteor.isClient
         "click #exit": (evt) ->
             LiveGames.remove(getGame()._id)
             Router.go "/dash"
+        "click #restart": (evt) ->
+            LiveGames.update getGame()._id, $set:
+                answers: [[]]
+                begun: no
+                over: no
+                question: 0
+                revealed: no
+            no

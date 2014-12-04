@@ -95,7 +95,10 @@
 <template name="hoststats">
     <h1 class="page-header">
         Statistics for {{name}}
-        <a href="/dash" class="btn btn-primary btn-lg pull-right" id="exit">Exit <i class="fa fa-times"></i></a>
+        <div class="pull-right">
+            <a href="/dash" class="btn btn-primary btn-lg" id="exit">Exit <i class="fa fa-times"></i></a>
+            <a href="#" class="btn btn-info btn-lg" id="restart">Restart <i class="fa fa-refresh"></i></a>
+        </div>
     </h1>
     <div class="row">
         <div class="col-sm-12">
