@@ -65,7 +65,7 @@ if Meteor.isClient
     Template.prep.events
         'click #begin': (evt) ->
             gameid = getGame()._id
-            LiveGames.update gameid, $set: {begun: yes, countdown: 5, answers: []}
+            LiveGames.update gameid, $set: {begun: yes, countdown: getGame().countdownlength, answers: []}
             updateInterval = 0
             update = ->
                 LiveGames.update gameid, $inc: countdown: -1
@@ -80,7 +80,7 @@ if Meteor.isClient
             LiveGames.update gameid, $set: revealed: yes
         "click #advance": (evt) ->
             gameid = getGame()._id
-            LiveGames.update gameid, $set: {revealed: no, countdown: 5}
+            LiveGames.update gameid, $set: {revealed: no, countdown: getGame().countdownlength}
             updateInterval = 0
             update = ->
                 LiveGames.update gameid, $inc: countdown: -1
