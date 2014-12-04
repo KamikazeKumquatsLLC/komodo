@@ -9,6 +9,19 @@ Router.route '/', ->
     else
         @redirect "/welcome"
 
+Meteor.methods
+    host: (options) ->
+        if not @userId
+            throw new Meteor.Error("logged-out", "The user must be logged in to host a quiz")
+        if not _.isObject(Quizzes.findOne(options.quiz))
+            throw new Meteor.Error("no-such-quiz", "There's no quiz with the id provided")
+        shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
+        while LiveGames.findOne({shortid: shortid})?
+            shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
+        overrides = shortid: "#{shortid}", players: [], answers: [[]], owner: @userId
+        LiveGames.insert _.extend options, overrides
+        return shortid
+
 if Meteor.isClient
     Template.registerHelper "ago", (time) -> moment(time).fromNow()
     Template.registerHelper "dump", -> JSON.stringify(Template.currentData())
@@ -33,13 +46,11 @@ if Meteor.isServer
         fetch: []
     
     LiveGames.allow
-        insert: (userId, doc) -> userId and _.isObject(Quizzes.findOne(doc.quiz)) and doc.owner is userId
         update: (userId, doc, fields, modifier) -> (userId is doc.owner) or _.without(fields, "players", "answers").length is 0
         remove: (userId, doc) -> userId is doc.owner
         fetch: []
     
     LiveGames.deny
-        insert: (userId, doc) -> _.isObject(LiveGames.findOne(shortid: doc.shortid))
         update: (userId, doc, fields, modifier) -> _.contains fields, "quiz" or _.contains fields, "owner"
         fetch: []
     
