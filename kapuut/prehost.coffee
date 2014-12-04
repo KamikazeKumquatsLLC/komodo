@@ -12,7 +12,15 @@ if Meteor.isClient
         'click #begin': (evt) ->
             id = Router.current().params.id
             name = $("#inputName").val()
-            Meteor.call "host", {quiz: id, name: name}, (err, shortid) ->
+            countdown = parseInt $("#inputCountdownLength").val()
+            if countdown < 0 or countdown isnt parseInt "#{countdown}"
+                console.log "Stuff broke!"
+                countdown = 5
+            options =
+                quiz: id
+                name: name
+                countdownlength: countdown
+            Meteor.call "host", options, (err, shortid) ->
                 unless err
                     Router.go "/host/#{shortid}"
             return no
