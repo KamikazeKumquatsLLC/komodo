@@ -11,7 +11,8 @@ if Meteor.isClient
     Template.prehost.events
         'click #begin': (evt) ->
             id = Router.current().params.id
-            Meteor.call "host", quiz: id, (err, shortid) ->
+            name = $("#inputName").val()
+            Meteor.call "host", {quiz: id, name: name}, (err, shortid) ->
                 unless err
                     Router.go "/host/#{shortid}"
             return no

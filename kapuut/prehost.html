@@ -2,6 +2,14 @@
     <div class="container">
         <h1 class="page-header">Hosting {{name}}</h1>
         <p>Settings:</p>
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputName" value="{{name}}">
+                </div>
+            </div>
+        </form>
         <p><a href="#" class="btn btn-lg btn-primary" id="begin"><i class="fa fa-play-circle"></i> Play</a></p>
     </div>
 </template>
