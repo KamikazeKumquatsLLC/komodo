@@ -1,4 +1,4 @@
-kapuut
+komodo
 ======
 
 Realtime classroom quizzing for power users.

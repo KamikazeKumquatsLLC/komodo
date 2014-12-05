@@ -11,8 +11,8 @@ if [ ! -d /home/vagrant/tmp ]; then
     ps ax | grep meteor | awk '{print $1;}' | head -n -1 | xargs kill
     #su vagrant -c 'meteor remove autopublish insecure'
     echo "Configuring permission fix..."
-    echo "sudo mount --bind /home/vagrant/tmp/.meteor/local/ /vagrant/kapuut/.meteor/local/" >> /home/vagrant/.bashrc
+    echo "sudo mount --bind /home/vagrant/tmp/.meteor/local/ /vagrant/komodo/.meteor/local/" >> /home/vagrant/.bashrc
     echo "Making life easier..."
-    echo "cd /vagrant/kapuut" >> /home/vagrant/.bashrc
+    echo "cd /vagrant/komodo" >> /home/vagrant/.bashrc
     echo "Done!"
 fi
