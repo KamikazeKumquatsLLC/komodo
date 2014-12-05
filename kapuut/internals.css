@@ -8,18 +8,6 @@
     left: inherit;
 }
 
-#player-qr-code {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-.fa-flip-llur-diagonal {
-    -webkit-transform: rotate(90deg) scale(-1, 1);
-    -ms-transform: rotate(90deg) scale(-1, 1);
-    transform: rotate(90deg) scale(-1, 1);
-}
-
 /* don't let Bootstrap collapse the navbar */
 .navbar-collapse {
     width: auto;
