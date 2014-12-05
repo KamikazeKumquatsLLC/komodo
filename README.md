@@ -3,7 +3,7 @@ komodo
 
 Realtime classroom quizzing for power users.
 
-Task list on [Waffle](https://waffle.io/kamikazekumquatsllc/kapuut).
+Task list on [Waffle](https://waffle.io/kamikazekumquatsllc/komodo).
 
 Development
 -----------
