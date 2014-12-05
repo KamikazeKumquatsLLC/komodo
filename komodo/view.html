@@ -1,0 +1,32 @@
+<template name="view">
+    <div class="container">
+        <h1 class="page-header">{{name}}</h1>
+        <p class="lead">{{description}}</p>
+        <p>
+            <a href="/prehost/{{_id}}" class="btn btn-lg btn-primary"><i class="fa fa-play-circle"></i> Play</a>
+            <a href="/edit/{{_id}}" class="btn btn-lg btn-warning"><i class="fa fa-pencil-square"></i> Edit</a>
+            <a href="#" class="btn btn-lg btn-info" id="duplicate"><i class="fa fa-copy"></i> Duplicate</a>
+        </p>
+        <ol>
+            {{#each questions}}
+                <li>
+                    {{#markdown}}{{text}}{{/markdown}}
+                    {{#if hasCorrectAnswer}}
+                        <ul class="fa-ul">
+                            {{#each answers}}
+                                <li><i class="fa fa-li fa-{{correctIndicator}}-square"></i>{{.}}</li>
+                            {{/each}}
+                        </ul>
+                    {{else}}
+                        <ul class="fa-ul">
+                            {{#each answers}}
+                                <li><i class="fa fa-li fa-square"></i>{{.}}</li>
+                            {{/each}}
+                        </ul>
+                    {{/if}}
+                </li>
+            {{/each}}
+        </ol>
+        <p>Last modified {{ago lastmod}}</p>
+    </div>
+</template>
