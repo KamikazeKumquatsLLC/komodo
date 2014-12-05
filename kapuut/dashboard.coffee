@@ -9,7 +9,7 @@ Router.route '/dash', ->
 if Meteor.isClient
     Template.dashboard.helpers
         hasCorrectAnswer: -> _.isNumber Template.currentData().correctAnswer
-        quizzes: -> Quizzes.find {}
+        quizzes: -> Quizzes.find {}, sort: [["lastmod", "desc"]]
     
     Template.dashboard.events
         "click #new": (evt) ->
