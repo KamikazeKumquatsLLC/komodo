@@ -1,3 +1,7 @@
+html, body {
+    height: 100%;
+}
+
 /* CSS declarations go here */
 #login-buttons {
     padding: 0px 15px;

@@ -1,0 +1,5 @@
+#CC831A - pumpkin
+#998160 - tan
+#FF753A - fire
+#79FFC7 - light aqua
+#1ACC4F - green

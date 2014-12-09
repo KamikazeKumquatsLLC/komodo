@@ -1,13 +1,13 @@
 <head>
     <title>Komodo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link rel="icon" type="image/png" href="/logo-min.png">
 </head>
 
 <template name="navbar">
     <nav role="navigation" class="navbar navbar-default">
         <div class="navbar-header">
-            <a href="#" class="navbar-brand">Komodo</a>
+            <a href="#" class="navbar-brand"><img src="/logo-min.svg" style="height:20px; display: inline;"> Komodo</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -29,5 +29,35 @@
 </template>
 
 <template name="loading">
-    <div class="container"><h1><i class="fa fa-spinner fa-spin"></i>Loading...</h1></div>
+    <svg class="center-block" data-initial-properties='{"opacity":1}' width="90" height="104" version="1.1" xmlns="http://www.w3.org/2000/svg" style="opacity:0;">
+        <g data-initial-properties='{"translateY":78}' transform="translate(0 78)" class="row1">
+            <polygon data-initial-properties='{"opacity":0}' points="00 26 15 00 30 26" fill="#1ACC4F"/>
+            <polygon data-initial-properties='{"translateX":30,"translateY":26,"scale":-1,"opacity":0}' points="00 00 15 26 30 00" fill="#79FFC7" />
+            <polygon data-initial-properties='{"translateX":45,"translateY":26,"scale":-1,"opacity":0}' points="00 26 15 00 30 26" fill="#1ACC4F" />
+            <polygon data-initial-properties='{"translateX":60,"translateY":26,"scale":-1,"opacity":0}' points="00 00 15 26 30 00" fill="#79FFC7" />
+            <polygon data-initial-properties='{"translateX":75,"translateY":26,"scale":-1,"opacity":0}' points="00 26 15 00 30 26" fill="#1ACC4F" />
+        </g>
+        <g data-initial-properties='{"translateY":104,"scaleY":-1,"opacity":0}' class="row2" style="transform: translateY(104px) scaleY(-1); opacity: 0;">
+            <polygon points="00 00 15 26 30 00" fill="#79FFC7"/>
+            <polygon points="15 26 30 00 45 26" fill="#1ACC4F"/>
+            <polygon points="30 00 45 26 60 00" fill="#79FFC7"/>
+            <polygon points="45 26 60 00 75 26" fill="#1ACC4F"/>
+            <polygon points="60 00 75 26 90 00" fill="#79FFC7"/>
+        </g>
+        <g data-initial-properties='{"translateY":78,"scaleY":-1,"opacity":0}' class="row3" style="transform: translateY(78px) scaleY(-1); opacity: 0;">
+            <polygon points="00 26 15 00 30 26" fill="#1ACC4F"/>
+            <polygon points="15 00 30 26 45 00" fill="#79FFC7"/>
+            <polygon points="30 26 45 00 60 26" fill="#1ACC4F"/>
+            <polygon points="45 00 60 26 75 00" fill="#79FFC7"/>
+            <polygon points="60 26 75 00 90 26" fill="#1ACC4F"/>
+        </g>
+        <g data-initial-properties='{"translateY":52,"scaleY":-1,"opacity":0}' class="row4" style="transform: translateY(52px) scaleY(-1); opacity: 0;">
+            <polygon points="00 00 15 26 30 00" fill="#79FFC7"/>
+            <polygon points="15 26 30 00 45 26" fill="#1ACC4F"/>
+            <polygon points="30 00 45 26 60 00" fill="#79FFC7"/>
+            <polygon points="45 26 60 00 75 26" fill="#1ACC4F"/>
+            <polygon points="60 00 75 26 90 00" fill="#79FFC7"/>
+        </g>
+    </svg>
+    <h3 class="text-center">Loading</h3>
 </template>
