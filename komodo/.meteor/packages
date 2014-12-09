@@ -11,8 +11,8 @@ jquery
 mizzao:bootstrap-3
 iron:router
 accounts-ui
-mrt:moment
 underscore
 chuangbo:marked
 percolate:velocityjs
-
+momentjs:moment
+fortawesome:fontawesome
