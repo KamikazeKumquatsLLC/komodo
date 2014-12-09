@@ -4,7 +4,7 @@ Router.route "/animtest", ->
 
 if Meteor.isClient
     Template.animtest.rendered = ->
-        $("g[data-initial-properties], polygon[data-initial-properties]").each ->
+        $("*[data-initial-properties]").each ->
             $(@).velocity
                 properties: JSON.parse @dataset.initialProperties
                 options:
@@ -12,17 +12,21 @@ if Meteor.isClient
     
     Template.animtest.events
         "click svg": ->
-            $("g[data-initial-properties], polygon[data-initial-properties]").each ->
+            $("*[data-initial-properties]").each ->
                 $(@).velocity
                     properties: JSON.parse @dataset.initialProperties
                     options:
                         duration: 0
+            fadeOut = ->
+                $("svg").velocity {opacity:0}, delay: 3000
             runRow4 = ->
                 $(".row4").velocity
                     properties:
                         scaleY: "+=2"
                         translateY: "-=52"
                         opacity: 1
+                    options:
+                        complete: fadeOut
             runRow3 = ->
                 $(".row3").velocity
                     properties:
