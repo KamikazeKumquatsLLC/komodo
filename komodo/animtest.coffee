@@ -1,6 +1,6 @@
 Router.route "/animtest", ->
     @layout ""
-    @render "animtest"
+    @render "loading"
 
 if Meteor.isClient
     Template.animtest.rendered = ->
