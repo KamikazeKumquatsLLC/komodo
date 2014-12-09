@@ -1,3 +1,7 @@
+Router.route "/play", ->
+    @layout ""
+    @render "find"
+
 Router.route "/play/:shortid", ->
     @wait Meteor.subscribe "quizPlay", @params.shortid
     
@@ -6,6 +10,7 @@ Router.route "/play/:shortid", ->
         Session.set "gameid", LiveGames.findOne(shortid: @params.shortid)._id
         @render "play", data: -> LiveGames.findOne shortid: @params.shortid
     else
+        @layout ""
         @render "loading"
 
 if Meteor.isClient
@@ -20,6 +25,11 @@ if Meteor.isClient
     
     Template.registerHelper "playername", ->
         _.filter(getGame().players, ({id, name}) -> id is Session.get("playerid"))[0]?.name
+    
+    Template.find.events
+        "click #playshortid": ->
+            shortid = $("#shortid").val()
+            Router.go "/play/#{shortid}"
     
     Template.play.helpers
         currentQuestion: -> getQuiz().questions[getGame().question]
