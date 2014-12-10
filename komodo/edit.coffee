@@ -131,6 +131,10 @@ if Meteor.isClient
                     if _(oldQuestion).has("answers")
                         modifier.$unset["questions.#{Session.get("selectedQuestion")}.answers"] = yes
             Quizzes.update getQuiz()._id, modifier
+        "change #inputTimeLimit": (evt) ->
+            modifier = $set: {}
+            modifier.$set["questions.#{Session.get("selectedQuestion")}.time"] = $("#inputTimeLimit").val()
+            Quizzes.update getQuiz()._id, modifier
         "click #deleteQuiz": (evt) ->
             Quizzes.remove getQuiz()._id
             Router.go "/dash"

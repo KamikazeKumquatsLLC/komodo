@@ -11,6 +11,9 @@
             {{#each questions}}
                 <li>
                     {{#markdown}}{{text}}{{/markdown}}
+                    {{#if time}}
+                        <i class="fa fa-clock-o"></i> {{time}} seconds
+                    {{/if}}
                     {{#if hasCorrectAnswer}}
                         <ul class="fa-ul">
                             {{#each answers}}
