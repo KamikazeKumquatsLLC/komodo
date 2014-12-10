@@ -17,7 +17,7 @@ chuangbo:marked@0.3.5
 coffeescript@1.0.4
 ctl-helper@1.0.4
 ctl@1.0.2
-ddp@1.0.11
+ddp@1.0.12
 deps@1.0.5
 ejson@1.0.4
 email@1.0.4
@@ -52,7 +52,7 @@ minimongo@1.0.5
 mizzao:bootstrap-3@3.3.1_1
 mobile-status-bar@1.0.1
 momentjs:moment@2.8.4
-mongo@1.0.8
+mongo@1.0.9
 mvrx:bluebird@0.0.1
 npm-bcrypt@0.7.7
 oauth2@1.1.1
