@@ -12,9 +12,13 @@
                             {{#if answered}}
                                 {{> reviewAnswer}}
                             {{else}}
-                                {{#with currentQuestion}}
-                                    {{> question}}
-                                {{/with}}
+                                {{#if revealed}}
+                                    {{> reviewNonAnswer}}
+                                {{else}}
+                                    {{#with currentQuestion}}
+                                        {{> question}}
+                                    {{/with}}
+                                {{/if}}
                             {{/if}}
                         {{/if}}
                     {{else}}
@@ -86,6 +90,10 @@
 
 <template name="reviewAnswer">
     <h1>You answered the question!</h1>
+</template>
+
+<template name="reviewNonAnswer">
+    <h1>You didn't answer the question!</h1>
 </template>
 
 <template name="results">
