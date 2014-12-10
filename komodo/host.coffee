@@ -72,7 +72,15 @@ if Meteor.isClient
                 LiveGames.update gameid, $inc: countdown: -1
                 if getGame().countdown <= 0
                     Meteor.clearInterval updateInterval
-                    LiveGames.update gameid, $set: question: 0
+                    LiveGames.update gameid, {$set: {question: 0}, $push: {answers: []}}
+                    if getQuiz().questions[getGame().question].time
+                        LiveGames.update gameid, $set: timer: getQuiz().questions[getGame().question].time
+                        update = ->
+                            LiveGames.update gameid, $inc: timer: -1
+                            if getGame().timer <= 0
+                                Meteor.clearInterval updateInterval
+                                $("#reveal").click()
+                        updateInterval = Meteor.setInterval update, 1000
             updateInterval = Meteor.setInterval update, 1000
     
     Template.hostquestion.events
@@ -88,6 +96,14 @@ if Meteor.isClient
                 if getGame().countdown <= 0
                     Meteor.clearInterval updateInterval
                     LiveGames.update gameid, {$inc: {question: 1}, $push: answers: []}
+                    if getQuiz().questions[getGame().question].time
+                        LiveGames.update gameid, $set: timer: getQuiz().questions[getGame().question].time
+                        update = ->
+                            LiveGames.update gameid, $inc: timer: -1
+                            if getGame().timer <= 0
+                                Meteor.clearInterval updateInterval
+                                $(".next").click()
+                        updateInterval = Meteor.setInterval update, 1000
             updateInterval = Meteor.setInterval update, 1000
         "click #end": (evt) ->
             gameid = getGame()._id

@@ -62,18 +62,18 @@
             {{#if answerable}}
                 {{#if ../revealed}}
                     {{#if last}}
-                        <button type="button" class="btn btn-primary btn-lg" id="end">End <i class="fa fa-sign-out"></i></button>
+                        <button type="button" class="btn btn-primary btn-lg next" id="end">End <i class="fa fa-sign-out"></i></button>
                     {{else}}
-                        <button type="button" class="btn btn-primary btn-lg" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
+                        <button type="button" class="btn btn-primary btn-lg next" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
                     {{/if}}
                 {{else}}
-                    <button type="button" class="btn btn-primary btn-lg" id="reveal">Reveal <i class="fa fa-bar-chart fa-flip-llur-diagonal"></i></button>
+                    <button type="button" class="btn btn-primary btn-lg next" id="reveal">Reveal <i class="fa fa-bar-chart fa-flip-llur-diagonal"></i></button>
                 {{/if}}
             {{else}}
                 {{#if last}}
-                    <button type="button" class="btn btn-primary btn-lg" id="end">End <i class="fa fa-sign-out"></i></button>
+                    <button type="button" class="btn btn-primary btn-lg next" id="end">End <i class="fa fa-sign-out"></i></button>
                 {{else}}
-                    <button type="button" class="btn btn-primary btn-lg" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
+                    <button type="button" class="btn btn-primary btn-lg next" id="advance">Next <i class="fa fa-arrow-circle-right"></i></button>
                 {{/if}}
             {{/if}}
         </h3>

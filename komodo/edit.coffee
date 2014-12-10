@@ -133,7 +133,7 @@ if Meteor.isClient
             Quizzes.update getQuiz()._id, modifier
         "change #inputTimeLimit": (evt) ->
             modifier = $set: {}
-            modifier.$set["questions.#{Session.get("selectedQuestion")}.time"] = $("#inputTimeLimit").val()
+            modifier.$set["questions.#{Session.get("selectedQuestion")}.time"] = parseInt $("#inputTimeLimit").val()
             Quizzes.update getQuiz()._id, modifier
         "click #deleteQuiz": (evt) ->
             Quizzes.remove getQuiz()._id
