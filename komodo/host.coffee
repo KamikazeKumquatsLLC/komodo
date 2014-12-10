@@ -61,6 +61,7 @@ if Meteor.isClient
             tmp.value()
         answerable: -> getQuiz().questions[getGame().question].answers?
         last: -> getQuiz().questions.length - 1 is getGame().question
+        timer: -> getGame().timer
     
     Template.prep.events
         'click #begin': (evt) ->

@@ -51,6 +51,9 @@ if Meteor.isClient
         'click #reset': (evt) ->
             LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
     
+    Template.question.helpers
+        timer: -> getGame().timer
+    
     Template.question.events
         "click .answer": (evt) ->
             selectedAnswer = evt.currentTarget.dataset.original

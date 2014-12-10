@@ -71,6 +71,11 @@
 </template>
 
 <template name="question">
+    {{#if timer}}
+        <span class="pull-right h3 player-timer">
+            {{timer}}<i class="fa fa-clock-o"></i>
+        </span>
+    {{/if}}
     {{#markdown}}{{text}}{{/markdown}}
     <div class="list-group">
         {{#each answers}}

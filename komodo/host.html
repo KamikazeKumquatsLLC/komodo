@@ -47,8 +47,17 @@
 <template name="hostquestion">
     <div class="pull-right">
         <h3>
+            {{#if timer}}
+                <span class="timer">
+                    <i class="fa fa-clock-o small"></i>{{timer}}
+                </span>
+            {{/if}}
             {{#if answerable}}
-                {{numAnswers}}/{{numPlayers}}
+                <span class="answer-count">
+                    <span><i class="fa fa-check-square-o small"></i>{{numAnswers}}</span>
+                    /
+                    <span><i class="fa fa-users small"></i>{{numPlayers}}</span>
+                </span>
             {{/if}}
             {{#if answerable}}
                 {{#if ../revealed}}
