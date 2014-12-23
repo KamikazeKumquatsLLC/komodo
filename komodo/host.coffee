@@ -21,6 +21,12 @@ if Meteor.isClient
     
     Template.host.helpers
         currentQuestion: -> getQuestion()
+
+    Template.fancyhostcountdown.created = ->
+        Session.set("didyouknow", _.random(DID_YOU_KNOW.length - 1))
+
+    Template.fancyhostcountdown.destroyed = ->
+        Session.set "didyouknow", 0
     
     Template.prep.rendered = ->
         Tracker.autorun (comp) ->

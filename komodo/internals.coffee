@@ -12,6 +12,14 @@ Router.route '/', ->
 if Meteor.isClient
     Template.registerHelper "ago", (time) -> moment(time).fromNow()
     Template.registerHelper "dump", -> JSON.stringify(Template.currentData())
+    Template.registerHelper "didyouknow", ->
+        Session.set("didyouknow", _.random(DID_YOU_KNOW.length)) until Session.get("didyouknow")
+        DID_YOU_KNOW[Session.get("didyouknow")]
+    Template.registerHelper "scales", (num) ->
+        if num is 1
+            "1 scale"
+        else
+            "#{num} scales"
     
     Template.navbar.helpers
         link: (path, text) ->
