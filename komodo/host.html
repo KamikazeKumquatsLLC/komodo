@@ -90,18 +90,18 @@
             </li>
         {{/each}}
     </ul>
-	{{#if ../revealed}}
-		<div class="row">
-			<div class="col-sm-12">
-				<h2>Top 5 Players (So far...)</h2>
-				<ol>
-					{{#each top5players}}
-						<li><h3>{{name}} <small>- {{score}}</small></h3></li>
-					{{/each}}
-				</ol>
-			</div>
-		</div>
-	{{/if}}
+    {{#if ../revealed}}
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>Top 5 Players (So far...)</h2>
+                <ol>
+                    {{#each top5players}}
+                        <li><h3>{{name}} <small>- {{score}}</small></h3></li>
+                    {{/each}}
+                </ol>
+            </div>
+        </div>
+    {{/if}}
 </template>
 
 <template name="hoststats">
