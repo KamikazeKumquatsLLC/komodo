@@ -9,19 +9,6 @@ Router.route '/', ->
     else
         @redirect "/welcome"
 
-Meteor.methods
-    host: (options) ->
-        if not @userId
-            throw new Meteor.Error("logged-out", "The user must be logged in to host a quiz")
-        if not _.isObject(Quizzes.findOne(options.quiz))
-            throw new Meteor.Error("no-such-quiz", "There's no quiz with the id provided")
-        shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
-        while LiveGames.findOne({shortid: shortid})?
-            shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
-        overrides = shortid: "#{shortid}", players: [], answers: [[]], owner: @userId
-        LiveGames.insert _.extend options, overrides
-        return shortid
-
 if Meteor.isClient
     Template.registerHelper "ago", (time) -> moment(time).fromNow()
     Template.registerHelper "dump", -> JSON.stringify(Template.currentData())

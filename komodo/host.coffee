@@ -22,6 +22,12 @@ if Meteor.isClient
     Template.host.helpers
         currentQuestion: -> getQuestion()
     
+    Template.prep.rendered = ->
+        Tracker.autorun (comp) ->
+            if getGame().players.length is getGame().expected
+                comp.stop()
+                $("#begin").click()
+    
     Template.prep.helpers
         playurl: ->
             here = Router.current().url
