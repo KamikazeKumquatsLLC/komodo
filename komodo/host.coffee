@@ -11,6 +11,7 @@ Router.route "/host/:shortid", ->
 if Meteor.isClient
     getGame = -> LiveGames.findOne shortid: Session.get "shortid"
     getQuiz = -> Quizzes.findOne getGame().quiz
+    getQuestion = -> getQuiz().questions[getGame().question]
     
     makeProxy = (attr) -> ->
         if getGame()[attr]?
@@ -19,7 +20,7 @@ if Meteor.isClient
             getQuiz()[attr]
     
     Template.host.helpers
-        currentQuestion: -> getQuiz().questions[getGame().question]
+        currentQuestion: -> getQuestion()
     
     Template.prep.helpers
         playurl: ->
@@ -40,27 +41,32 @@ if Meteor.isClient
         numAnswers: -> getGame().answers[getGame().question].length
         numPlayers: -> getGame().players.length
         count: ->
-            index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
+            index = getQuestion().answers.indexOf(Template.currentData())
             _.filter(getGame().answers[getGame().question], ({answer}) -> answer is index).length
         color: ->
-            index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
-            if _.isNumber getQuiz().questions[getGame().question].correctAnswer
-                if getQuiz().questions[getGame().question].correctAnswer is index
+            index = getQuestion().answers.indexOf(Template.currentData())
+            if _.isNumber getQuestion().correctAnswer
+                if getQuestion().correctAnswer is index
                     "success"
                 else
                     "danger"
             else
                 "info"
         guessers: ->
-            index = getQuiz().questions[getGame().question].answers.indexOf(Template.currentData())
+            index = getQuestion().answers.indexOf(Template.currentData())
             tmp = _.chain(getGame().answers[getGame().question])
             tmp = tmp.where(answer: index)
             tmp = tmp.map(({id}) -> _.findWhere(getGame().players, id: id))
             tmp = tmp.compact() # remove falsy values
             tmp = tmp.pluck("name")
             tmp.value()
-        answerable: -> getQuiz().questions[getGame().question].answers?
+        answerable: -> getQuestion().answers?
         last: -> getQuiz().questions.length - 1 is getGame().question
+        top5players: ->
+            _(getGame().players).chain()
+                .sortBy(({score}) -> -score)
+                .first(5)
+                .value()
     
     Template.prep.events
         'click #begin': (evt) ->
@@ -77,7 +83,21 @@ if Meteor.isClient
     Template.hostquestion.events
         "click #reveal": (evt) ->
             gameid = getGame()._id
-            LiveGames.update gameid, $set: revealed: yes
+            modifier = $inc: {}
+            # modifier.$push["answers.#{getGame().question}"] = {id: Session.get("playerid"), answer: answer}
+            # LiveGames.update gameid, $set:
+            index = getQuestion().correctAnswer
+            tmp = _.chain(getGame().answers[getGame().question])
+            tmp = tmp.where(answer: index)
+            tmp = tmp.map(({id}) -> _.findWhere(getGame().players, id: id))
+            tmp = tmp.compact() # remove falsy values
+            # now tmp.value() is the list of all the players who answered right
+            tmp = tmp.map (x) -> (i for val, i in getGame().players when _.isEqual(x, val))[0]
+            # now tmp.value() is the index of each player who answered right
+            tmp.each (i) -> modifier.$inc["players.#{i}.score"] = 1
+            modifier.$set = revealed: yes
+            # console.log modifier
+            LiveGames.update gameid, modifier
         "click #advance": (evt) ->
             gameid = getGame()._id
             LiveGames.update gameid, $set: {revealed: no, countdown: getGame().countdownlength}
@@ -94,14 +114,8 @@ if Meteor.isClient
     
     Template.hoststats.helpers
         top5players: ->
-            correctAnswers = _(getQuiz().questions).pluck "correctAnswer"
-            total = _.filter(correctAnswers, _.isNumber).length
             _(getGame().players).chain()
-                .map(({name, id}) -> name: name, answers: _.map getGame().answers, (list) -> _.findWhere list, id: id)
-                .map(({name, answers}) -> name: name, answers: _.zip(correctAnswers, _.map(answers, (x) -> x?.answer)))
-                .map(({name, answers}) -> name: name, correct: _.filter(answers, ([correct, mine]) -> mine? and correct? and correct is mine).length)
-                .map(({name, correct}) -> name: name, pct: Math.round(10000*correct/total)/100)
-                .sortBy(({name, pct}) -> -pct)
+                .sortBy(({score}) -> -score)
                 .first(5)
                 .value()
     
