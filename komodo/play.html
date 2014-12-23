@@ -12,9 +12,13 @@
                             {{#if answered}}
                                 {{> reviewAnswer}}
                             {{else}}
-                                {{#with currentQuestion}}
-                                    {{> question}}
-                                {{/with}}
+                                {{#if revealed}}
+                                    {{> reviewNonAnswer}}
+                                {{else}}
+                                    {{#with currentQuestion}}
+                                        {{> question}}
+                                    {{/with}}
+                                {{/if}}
                             {{/if}}
                         {{/if}}
                     {{else}}
@@ -71,6 +75,11 @@
 </template>
 
 <template name="question">
+    {{#if timer}}
+        <span class="pull-right h3 player-timer">
+            {{timer}}<i class="fa fa-clock-o"></i>
+        </span>
+    {{/if}}
     {{#markdown}}{{text}}{{/markdown}}
     <div class="list-group">
         {{#each answers}}
@@ -81,6 +90,10 @@
 
 <template name="reviewAnswer">
     <h1>You answered the question!</h1>
+</template>
+
+<template name="reviewNonAnswer">
+    <h1>You didn't answer the question!</h1>
 </template>
 
 <template name="results">

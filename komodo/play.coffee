@@ -52,12 +52,14 @@ if Meteor.isClient
         'click #reset': (evt) ->
             LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
     
+    Template.question.helpers
+        timer: -> getGame().timer
+    
     Template.question.events
         "click .answer": (evt) ->
             selectedAnswer = evt.currentTarget.dataset.original
             answerList = Template.currentData().answers
             answer = answerList.indexOf(selectedAnswer)
-            console.log "Answering #{answer}"
             modifier = $push: {}
             modifier.$push["answers.#{getGame().question}"] = {id: Session.get("playerid"), answer: answer}
             LiveGames.update Session.get("gameid"), modifier
