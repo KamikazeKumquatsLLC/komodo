@@ -30,14 +30,19 @@ if Meteor.isClient
             filtered = _.filter(list, criterion)
             filtered[0]?
     
+    Template.fancycountdown.created = ->
+        Session.set("didyouknow", _.random(DID_YOU_KNOW.length - 1))
+    
+    Template.fancycountdown.destroyed = ->
+        Session.set "didyouknow", 0
+    
     Template.enterplayername.helpers
         name: makeProxy "name"
         oldnames: -> JSON.parse localStorage.getItem "oldnames"
     
     Template.enterplayername.events
         'click #generate': (evt) ->
-            index = Math.floor(Math.random() * SAMPLE_NAMES.length)
-            $("#playername").val(SAMPLE_NAMES[index])
+            $("#playername").val(_.sample(SAMPLE_NAMES))
         'click #accept': (evt) ->
             localStorage.setItem "oldnames", JSON.stringify _.compact _.union [$("#playername").val()], JSON.parse localStorage.getItem "oldnames"
             Session.setDefault("playerid", Math.random())
