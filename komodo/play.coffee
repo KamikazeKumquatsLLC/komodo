@@ -11,6 +11,7 @@ Router.route "/play/:shortid", ->
 if Meteor.isClient
     getGame = -> LiveGames.findOne Session.get "gameid"
     getQuiz = -> Quizzes.findOne getGame().quiz
+    getMe = -> _.findWhere getGame().players, id: Session.get("playerid")
     
     makeProxy = (attr) -> ->
         if Template.currentData()[attr]?
@@ -19,7 +20,7 @@ if Meteor.isClient
             Quizzes.findOne(Template.currentData().quiz)[attr]
     
     Template.registerHelper "playername", ->
-        _.filter(getGame().players, ({id, name}) -> id is Session.get("playerid"))[0]?.name
+        getMe()?.name
     
     Template.play.helpers
         currentQuestion: -> getQuiz().questions[getGame().question]
@@ -41,7 +42,7 @@ if Meteor.isClient
             localStorage.setItem "oldnames", JSON.stringify _.compact _.union [$("#playername").val()], JSON.parse localStorage.getItem "oldnames"
             Session.setDefault("playerid", Math.random())
             LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
-            LiveGames.update Session.get("gameid"), {$push: players: {id: Session.get("playerid"), name: $("#playername").val()}}
+            LiveGames.update Session.get("gameid"), {$push: players: {id: Session.get("playerid"), name: $("#playername").val(), score: 0}}
             window.addEventListener "beforeunload", ->
                 LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
         'click .oldname': (evt) ->
@@ -69,3 +70,4 @@ if Meteor.isClient
         correct: correct
         total: total
         pct: -> Math.round(10000*correct()/total())/100
+        score: -> getMe().score
