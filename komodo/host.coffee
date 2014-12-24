@@ -8,6 +8,48 @@ Router.route "/host/:shortid", ->
     else
         @render "loading"
 
+countdowns = {}
+timers = {}
+
+Meteor.methods
+    startCountdown: (gameid) ->
+        unless @isSimulation
+            unless countdowns[gameid]
+                game = LiveGames.findOne(gameid)
+                LiveGames.update gameid, $set: {revealed: no, countdown: game.countdownlength}
+                update = ->
+                    LiveGames.update gameid, $inc: countdown: -1
+                    if LiveGames.findOne(gameid).countdown <= 0
+                        Meteor.call "stopCountdown", gameid
+                countdowns[gameid] = Meteor.setInterval update, 1000
+        no
+    stopCountdown: (gameid) ->
+        if countdowns[gameid]
+            Meteor.clearInterval countdowns[gameid]
+            countdowns[gameid] = undefined
+            LiveGames.update gameid, {$inc: {question: 1}, $push: {answers: []}}
+            Meteor.call "startTimer", gameid
+        no
+    startTimer: (gameid) ->
+        unless @isSimulation
+            unless timers[gameid]
+                {quiz, question} = LiveGames.findOne(gameid)
+                quiz = Quizzes.findOne(quiz)
+                if quiz.questions[question].time
+                    LiveGames.update gameid, $set: timer: quiz.questions[question].time
+                    update = ->
+                        LiveGames.update gameid, $inc: timer: -1
+                        if LiveGames.findOne(gameid).timer <= 0
+                            Meteor.call "stopTimer", gameid
+                    timers[gameid] = Meteor.setInterval update, 1000
+        no
+    stopTimer: (gameid) ->
+        if timers[gameid]
+            Meteor.clearInterval timers[gameid]
+            LiveGames.update gameid, $set: timer: 0, revealed: yes
+            timers[gameid] = undefined
+        no
+
 if Meteor.isClient
     getGame = -> LiveGames.findOne shortid: Session.get "shortid"
     getQuiz = -> Quizzes.findOne getGame().quiz
@@ -78,45 +120,17 @@ if Meteor.isClient
     Template.prep.events
         'click #begin': (evt) ->
             gameid = getGame()._id
-            LiveGames.update gameid, $set: {begun: yes, countdown: getGame().countdownlength, answers: []}
-            updateInterval = 0
-            update = ->
-                LiveGames.update gameid, $inc: countdown: -1
-                if getGame().countdown <= 0
-                    Meteor.clearInterval updateInterval
-                    LiveGames.update gameid, {$set: {question: 0}, $push: {answers: []}}
-                    if getQuiz().questions[getGame().question].time
-                        LiveGames.update gameid, $set: timer: getQuiz().questions[getGame().question].time
-                        update = ->
-                            LiveGames.update gameid, $inc: timer: -1
-                            if getGame().timer <= 0
-                                Meteor.clearInterval updateInterval
-                                $("#reveal").click()
-                        updateInterval = Meteor.setInterval update, 1000
-            updateInterval = Meteor.setInterval update, 1000
+            LiveGames.update gameid, $set: {question: -1, begun: yes, answers: [[]]}
+            Meteor.call "startCountdown", gameid
     
     Template.hostquestion.events
         "click #reveal": (evt) ->
             gameid = getGame()._id
+            Meteor.call "stopTimer", gameid
             LiveGames.update gameid, $set: revealed: yes
         "click #advance": (evt) ->
             gameid = getGame()._id
-            LiveGames.update gameid, $set: {revealed: no, countdown: getGame().countdownlength}
-            updateInterval = 0
-            update = ->
-                LiveGames.update gameid, $inc: countdown: -1
-                if getGame().countdown <= 0
-                    Meteor.clearInterval updateInterval
-                    LiveGames.update gameid, {$inc: {question: 1}, $push: answers: []}
-                    if getQuiz().questions[getGame().question].time
-                        LiveGames.update gameid, $set: timer: getQuiz().questions[getGame().question].time
-                        update = ->
-                            LiveGames.update gameid, $inc: timer: -1
-                            if getGame().timer <= 0
-                                Meteor.clearInterval updateInterval
-                                $(".next").click()
-                        updateInterval = Meteor.setInterval update, 1000
-            updateInterval = Meteor.setInterval update, 1000
+            Meteor.call "startCountdown", gameid
         "click #end": (evt) ->
             gameid = getGame()._id
             LiveGames.update gameid, $set: over: yes
@@ -130,8 +144,8 @@ if Meteor.isClient
     
     Template.hoststats.events
         "click #exit": (evt) ->
-            LiveGames.remove(getGame()._id)
             Router.go "/dash"
+            LiveGames.remove(getGame()._id)
         "click #restart": (evt) ->
             LiveGames.update getGame()._id, $set:
                 answers: [[]]
