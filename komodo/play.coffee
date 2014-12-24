@@ -19,8 +19,8 @@ Meteor.methods
         game = LiveGames.findOne(gameid)
         {allowLateAnswers, revealed, timer, players, quiz, question} = game
         if revealed and not allowLateAnswers
-            throw new Error("Tried to answer a question that was already revealed!")
-        modifier = $push: {}, $inc: {}
+            throw new Meteor.Error("too-late", "Tried to answer a question that was already revealed!")
+        modifier = $push: {}, $set: {}
         modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
         unless @isSimulation
             quiz = Quizzes.findOne(quiz)
@@ -32,10 +32,23 @@ Meteor.methods
                     timeScale = 1
                     if _.isNumber(question.time)
                         timeScale = timer / question.time
-                    modifier.$inc["players.#{i}.score"] = Math.floor(value * timeScale)
+                    modifier.$set["players.#{i}.tmpscore"] = Math.floor(value * timeScale)
+        LiveGames.update gameid, modifier
+    unanswer: ({playerid, gameid}) ->
+        game = LiveGames.findOne(gameid)
+        {allowLateAnswers, revealed, question, players} = game
+        if revealed and not allowLateAnswers
+            throw new Meteor.Error("too-late", "Tried to un-answer a question that was already revealed!")
+        modifier = $pull: {}, $set: {}
+        modifier.$pull["answers.#{question}"] = {id: playerid}
+        unless @isSimulation
+            i = (i for val, i in players when val.id is playerid)[0]
+            modifier.$set["players.#{i}.tmpscore"] = 0
         LiveGames.update gameid, modifier
     getAnswer: ({playerid, gameid, question}) ->
-        list = LiveGames.findOne(gameid).answers[question]
+        game = LiveGames.findOne(gameid)
+        question = game.question unless _.isNumber question
+        list = game.answers?[question]
         criterion = ({id}) -> playerid is id
         filtered = _.filter(list, criterion)
         filtered[0]
@@ -62,15 +75,25 @@ if Meteor.isClient
                 console.log error
             Session.set "playername", me?.name
             Session.set "score", me?.score
+        Meteor.call "getAnswer",
+            playerid: Session.get("playerid")
+            gameid: Session.get("gameid")
+        , (error, answer) ->
+            if error?
+                console.log error
+            Session.set "answer", answer
+    
+    Template.play.rendered = ->
+        Meteor.setInterval updateMyInfo, 1000
     
     Template.registerHelper "playername", -> Session.get("playername")
     
     Template.fancycountdown.rendered = ->
-        Session.set "answered", no
+        Session.set "answer"
     
     Template.play.helpers
         currentQuestion: -> getQuiz().questions[getGame().question]
-        answered: -> Session.get "answered"
+        answered: -> _.isObject Session.get "answer"
         didntAnswer: -> not getGame().allowLateAnswers and getGame().revealed
     
     Template.enterplayername.helpers
@@ -108,6 +131,18 @@ if Meteor.isClient
                 gameid: Session.get("gameid")
                 playerid: Session.get("playerid")
     
+    Template.reviewAnswer.helpers
+        canUnanswer: ->
+            {allowLateAnswers, revealed} = getGame()
+            allowLateAnswers or not revealed
+    
+    Template.reviewAnswer.events
+        "click #unanswer": (evt) ->
+            Session.set "answer"
+            Meteor.call "unanswer",
+                playerid: Session.get("playerid")
+                gameid: Session.get "gameid"
+    
     Template.question.helpers
         timer: -> getGame().timer
     
@@ -120,7 +155,7 @@ if Meteor.isClient
                 playerid: Session.get("playerid")
                 gameid: Session.get("gameid")
                 answer: answer
-            Session.set "answered", yes
+            Session.set "answer", answer
             no
     
     updateCorrect = ->
