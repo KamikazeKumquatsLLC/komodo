@@ -16,8 +16,9 @@ Meteor.methods
     getPlayer: ({playerid, gameid}) ->
         _.findWhere LiveGames.findOne(gameid).players, id: playerid
     answer: ({playerid, gameid, answer}) ->
-        {revealed, timer, players, quiz, question} = LiveGames.findOne(gameid)
-        if revealed
+        game = LiveGames.findOne(gameid)
+        {allowLateAnswers, revealed, timer, players, quiz, question} = game
+        if revealed and not allowLateAnswers
             throw new Error("Tried to answer a question that was already revealed!")
         modifier = $push: {}, $inc: {}
         modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
@@ -70,6 +71,7 @@ if Meteor.isClient
     Template.play.helpers
         currentQuestion: -> getQuiz().questions[getGame().question]
         answered: -> Session.get "answered"
+        didntAnswer: -> not getGame().allowLateAnswers and getGame().revealed
     
     Template.enterplayername.helpers
         name: makeProxy "name"
