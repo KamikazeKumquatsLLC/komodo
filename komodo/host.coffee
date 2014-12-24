@@ -51,13 +51,21 @@ Meteor.methods
         no
 
 if Meteor.isClient
-    getGame = -> LiveGames.findOne shortid: Session.get "shortid"
-    getQuiz = -> Quizzes.findOne getGame().quiz
-    getQuestion = -> getQuiz().questions[getGame().question]
+    getGame = -> LiveGames.findOne({shortid: Session.get "shortid"}, options)
+    getGameFields = (desired) ->
+        desired = [desired] unless _.isArray(desired)
+        fields = {}
+        for x in desired
+            fields[x] = 1
+        LiveGames.findOne({shortid: Session.get "shortid"}, {fields: fields})
+    getGameField = (desired) -> getGameFields(desired)[desired]
+    getQuiz = -> Quizzes.findOne getGameField("quiz")
+    getQuestion = -> getQuiz().questions[getGameField("question")]
+    getAnswers = -> getGameField("answers")[getGameField("question")]
     
     makeProxy = (attr) -> ->
-        if getGame()[attr]?
-            getGame()[attr]
+        if getGameField(attr)?
+            getGameField(attr)
         else
             getQuiz()[attr]
     
@@ -66,7 +74,8 @@ if Meteor.isClient
     
     Template.prep.rendered = ->
         Tracker.autorun (comp) ->
-            if getGame().players.length is getGame().expected
+            {players, expected} = getGameFields ["players", "expected"]
+            if players.length is expected
                 comp.stop()
                 $("#begin").click()
     
@@ -81,16 +90,16 @@ if Meteor.isClient
             if here.indexOf("http") is -1
                 here = location.origin + here
             encodeURIComponent here.replace("host", "play")
-        count: -> getGame().players.length
+        count: -> getGameField("players").length
         gamename: makeProxy "name"
         description: makeProxy "description"
     
     Template.hostquestion.helpers
-        numAnswers: -> getGame().answers[getGame().question].length
-        numPlayers: -> getGame().players.length
+        numAnswers: -> getAnswers().length
+        numPlayers: -> getGameField("players").length
         count: ->
             index = getQuestion().answers.indexOf(Template.currentData())
-            _.filter(getGame().answers[getGame().question], ({answer}) -> answer is index).length
+            _.filter(getAnswers(), ({answer}) -> answer is index).length
         color: ->
             index = getQuestion().answers.indexOf(Template.currentData())
             if _.isNumber getQuestion().correctAnswer
@@ -102,42 +111,52 @@ if Meteor.isClient
                 "info"
         guessers: ->
             index = getQuestion().answers.indexOf(Template.currentData())
-            tmp = _.chain(getGame().answers[getGame().question])
+            tmp = _.chain(getAnswers())
             tmp = tmp.where(answer: index)
-            tmp = tmp.map(({id}) -> _.findWhere(getGame().players, id: id))
+            tmp = tmp.map(({id}) -> _.findWhere(getGameField("players"), id: id))
             tmp = tmp.compact() # remove falsy values
             tmp = tmp.pluck("name")
             tmp.value()
         answerable: -> getQuestion().answers?
-        last: -> getQuiz().questions.length - 1 is getGame().question
+        last: -> getQuiz().questions.length - 1 is getGameField("question")
         top5players: ->
-            _(getGame().players).chain()
+            _(getGameField("players")).chain()
                 .sortBy(({score}) -> -score)
                 .first(5)
                 .value()
-        timer: -> getGame().timer
+        timer: -> getGameField("timer")
     
     Template.prep.events
         'click #begin': (evt) ->
-            gameid = getGame()._id
-            LiveGames.update gameid, $set: {question: -1, begun: yes, answers: [[]]}
+            gameid = getGameField("_id")
+            LiveGames.update gameid, $set: {question: -1, begun: yes, answers: []}
             Meteor.call "startCountdown", gameid
+    
+    Template.hostquestion.rendered = -> _.defer ->
+        Tracker.autorun (comp) ->
+            game = getGameFields ["answers", "question", "players", "revealed", "countdown"]
+            {answers, question, players, revealed, countdown} = game
+            unless players.length is 0
+                unless revealed or countdown or answers.length isnt question + 1
+                    if players.length is answers[question]?.length
+                        $("#reveal").click()
+                        comp.stop()
     
     Template.hostquestion.events
         "click #reveal": (evt) ->
-            gameid = getGame()._id
+            gameid = getGameField("_id")
             Meteor.call "stopTimer", gameid
             LiveGames.update gameid, $set: revealed: yes
         "click #advance": (evt) ->
-            gameid = getGame()._id
+            gameid = getGameField("_id")
             Meteor.call "startCountdown", gameid
         "click #end": (evt) ->
-            gameid = getGame()._id
+            gameid = getGameField("_id")
             LiveGames.update gameid, $set: over: yes
     
     Template.hoststats.helpers
         top5players: ->
-            _(getGame().players).chain()
+            _(getGameField("players")).chain()
                 .sortBy(({score}) -> -score)
                 .first(5)
                 .value()
@@ -145,10 +164,10 @@ if Meteor.isClient
     Template.hoststats.events
         "click #exit": (evt) ->
             Router.go "/dash"
-            LiveGames.remove(getGame()._id)
+            LiveGames.remove(getGameField("_id"))
         "click #restart": (evt) ->
-            LiveGames.update getGame()._id, $set:
-                answers: [[]]
+            LiveGames.update getGameField("_id"), $set:
+                answers: []
                 begun: no
                 over: no
                 question: 0
