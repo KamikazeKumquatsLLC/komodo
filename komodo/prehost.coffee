@@ -27,6 +27,9 @@ if Meteor.isClient
             name = $("#inputName").val()
             countdown = parseInt $("#inputCountdownLength").val()
             expected = parseInt $("#inputExpectedPlayers").val()
+            showGuessers = $("#inputShowGuessers:checked").length is 1
+            allowLateAnswers = $("#inputAllowLateAnswers:checked").length is 1
+            revealWithAllAnswers = $("#inputRevealWithAllAnswers:checked").length is 1
             if countdown < 0 or countdown isnt parseInt "#{countdown}"
                 console.log "Stuff broke!"
                 countdown = 5
@@ -35,6 +38,9 @@ if Meteor.isClient
                 name: name
                 countdownlength: countdown
                 expected: expected
+                showGuessers: showGuessers
+                allowLateAnswers: allowLateAnswers
+                revealWithAllAnswers: revealWithAllAnswers
             Meteor.call "host", options, (err, shortid) ->
                 unless err
                     Router.go "/host/#{shortid}"

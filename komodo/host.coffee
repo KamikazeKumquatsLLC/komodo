@@ -110,13 +110,14 @@ if Meteor.isClient
             else
                 "info"
         guessers: ->
-            index = getQuestion().answers.indexOf(Template.currentData())
-            tmp = _.chain(getAnswers())
-            tmp = tmp.where(answer: index)
-            tmp = tmp.map(({id}) -> _.findWhere(getGameField("players"), id: id))
-            tmp = tmp.compact() # remove falsy values
-            tmp = tmp.pluck("name")
-            tmp.value()
+            if getGameField("showGuessers")
+                index = getQuestion().answers.indexOf(Template.currentData())
+                tmp = _.chain(getAnswers())
+                tmp = tmp.where(answer: index)
+                tmp = tmp.map(({id}) -> _.findWhere(getGameField("players"), id: id))
+                tmp = tmp.compact() # remove falsy values
+                tmp = tmp.pluck("name")
+                tmp.value()
         answerable: -> getQuestion().answers?
         last: -> getQuiz().questions.length - 1 is getGameField("question")
         top5players: ->
@@ -133,14 +134,15 @@ if Meteor.isClient
             Meteor.call "startCountdown", gameid
     
     Template.hostquestion.rendered = -> _.defer ->
-        Tracker.autorun (comp) ->
-            game = getGameFields ["answers", "question", "players", "revealed", "countdown"]
-            {answers, question, players, revealed, countdown} = game
-            unless players.length is 0
-                unless revealed or countdown or answers.length isnt question + 1
-                    if players.length is answers[question]?.length
-                        $("#reveal").click()
-                        comp.stop()
+        if getGameField("revealWithAllAnswers")
+            Tracker.autorun (comp) ->
+                game = getGameFields ["answers", "question", "players", "revealed", "countdown"]
+                {answers, question, players, revealed, countdown} = game
+                unless players.length is 0
+                    unless revealed or countdown or answers.length isnt question + 1
+                        if players.length is answers[question]?.length
+                            $("#reveal").click()
+                            comp.stop()
     
     Template.hostquestion.events
         "click #reveal": (evt) ->
