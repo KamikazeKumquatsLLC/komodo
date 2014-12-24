@@ -13,5 +13,9 @@ if Meteor.isClient
     
     Template.dashboard.events
         "click #new": (evt) ->
-            id = Quizzes.insert({name: "New Quiz",lastmod: new Date(), owner: Meteor.userId()})
+            id = Quizzes.insert
+                name: "New Quiz"
+                lastmod: new Date()
+                owner: Meteor.userId()
+                questions: [{answers:[""]}]
             Router.go "/edit/#{id}"
