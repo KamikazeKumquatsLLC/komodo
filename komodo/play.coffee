@@ -22,9 +22,9 @@ Meteor.methods
             throw new Error("Tried to answer a question that was already revealed!")
         modifier = $push: {}, $inc: {}
         modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
-        quiz = Quizzes.findOne(quiz)
-        question = quiz.questions[question]
         unless @isSimulation
+            quiz = Quizzes.findOne(quiz)
+            question = quiz.questions[question]
             if _.isNumber(question.correctAnswer)
                 if question.correctAnswer is answer
                     i = (i for val, i in players when val.id is playerid)[0]
@@ -45,7 +45,7 @@ Meteor.methods
 
 if Meteor.isClient
     getGame = -> LiveGames.findOne Session.get "gameid"
-    getQuiz = -> Quizzes.findOne getGame().quiz
+    getQuiz = -> {questions: getGame().questionData}
     
     makeProxy = (attr) -> ->
         if Template.currentData()[attr]?
@@ -53,7 +53,7 @@ if Meteor.isClient
         else
             Quizzes.findOne(Template.currentData().quiz)[attr]
     
-    updateScore = ->
+    updateMyInfo = ->
         Meteor.call "getPlayer",
             playerid: Session.get("playerid")
             gameid: Session.get("gameid")
@@ -137,7 +137,7 @@ if Meteor.isClient
     
     Template.results.rendered = ->
         updateCorrect()
-        updateScore()
+        updateMyInfo()
     
     Template.results.helpers
         correct: -> Session.get "correct"

@@ -119,5 +119,4 @@ if Meteor.isServer
     Meteor.publish "quizPlay", (shortid) ->
         check(shortid, String)
         game = LiveGames.findOne({shortid: shortid})
-        quizId = game.quiz
-        return [Quizzes.find(quizId), LiveGames.find({shortid: shortid}, {fields: answers: 0, players: 0})]
+        return [LiveGames.find({shortid: shortid}, {fields: answers: 0, players: 0})]

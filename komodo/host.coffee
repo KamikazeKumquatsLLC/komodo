@@ -27,7 +27,14 @@ Meteor.methods
         if countdowns[gameid]
             Meteor.clearInterval countdowns[gameid]
             countdowns[gameid] = undefined
+            game = LiveGames.findOne(gameid)
+            newQuestion = game.question + 1
             LiveGames.update gameid, {$inc: {question: 1}, $push: {answers: []}}
+            questionData = Quizzes.findOne(game.quiz).questions[newQuestion]
+            console.log JSON.stringify questionData
+            set = {}
+            set["questionData.#{newQuestion}"] = _.omit questionData, "correctAnswer"
+            LiveGames.update gameid, $set: set
             Meteor.call "startTimer", gameid
         no
     startTimer: (gameid) ->
@@ -78,6 +85,18 @@ if Meteor.isClient
             if players.length is expected
                 comp.stop()
                 $("#begin").click()
+    
+    Meteor.startup ->
+        Tracker.autorun (comp) ->
+            game = getGameFields ["revealed", "question", "questionData"]
+            return unless game?
+            {revealed, question, questionData} = game
+            if revealed
+                unless _.isNumber questionData[question].correctAnswer
+                    if _.isNumber getQuestion().correctAnswer
+                        set = {}
+                        set["questionData.#{question}.correctAnswer"] = getQuestion().correctAnswer
+                        LiveGames.update game._id, $set: set
     
     Template.prep.helpers
         playurl: ->
@@ -130,7 +149,7 @@ if Meteor.isClient
     Template.prep.events
         'click #begin': (evt) ->
             gameid = getGameField("_id")
-            LiveGames.update gameid, $set: {question: -1, begun: yes, answers: []}
+            LiveGames.update gameid, $set: {question: -1, begun: yes, answers: [], questionData: []}
             Meteor.call "startCountdown", gameid
     
     Template.hostquestion.rendered = -> _.defer ->
@@ -170,6 +189,7 @@ if Meteor.isClient
         "click #restart": (evt) ->
             LiveGames.update getGameField("_id"), $set:
                 answers: []
+                questionData: []
                 begun: no
                 over: no
                 question: 0
