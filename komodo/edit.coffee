@@ -70,9 +70,7 @@ if Meteor.isClient
                 Quizzes.update getQuiz()._id, $set: setOperator
         
         Tracker.autorun ->
-            if locked
-                console.log getQuestion()
-            else
+            unless locked
                 locked = yes
                 position = questionEditor.getCursorPosition()
                 questionEditor.setValue getQuestion().text, 1
