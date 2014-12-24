@@ -8,6 +8,22 @@ Router.route "/play/:shortid", ->
     else
         @render "loading"
 
+Meteor.methods
+    addPlayer: ({playerid, gameid, name}) ->
+        LiveGames.update gameid, {$push: players: {id: playerid, name: name, score: 0}}
+    removePlayer: ({playerid, gameid}) ->
+        LiveGames.update gameid, {$pull: {players: id: playerid}}
+    answer: ({playerid, gameid, question, answer}) ->
+        modifier = $push: {}, $inc: {}
+        modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
+        {players, quiz, question} = LiveGames.findOne(gameid)
+        quiz = Quizzes.findOne(quiz)
+        if _.isNumber(quiz.questions[question].correctAnswer)
+            if quiz.questions[question].correctAnswer is answer
+                i = (i for val, i in players when val.id is playerid)[0]
+                modifier.$inc["players.#{i}.score"] = 1
+        LiveGames.update gameid, modifier
+
 if Meteor.isClient
     getGame = -> LiveGames.findOne Session.get "gameid"
     getQuiz = -> Quizzes.findOne getGame().quiz
@@ -41,16 +57,25 @@ if Meteor.isClient
         'click #accept': (evt) ->
             localStorage.setItem "oldnames", JSON.stringify _.compact _.union [$("#playername").val()], JSON.parse localStorage.getItem "oldnames"
             Session.setDefault("playerid", Math.random())
-            LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
-            LiveGames.update Session.get("gameid"), {$push: players: {id: Session.get("playerid"), name: $("#playername").val(), score: 0}}
+            Meteor.call "removePlayer",
+                gameid: Session.get("gameid")
+                playerid: Session.get("playerid")
+            Meteor.call "addPlayer",
+                gameid: Session.get("gameid")
+                playerid: Session.get("playerid")
+                name: $("#playername").val()
             window.addEventListener "beforeunload", ->
-                LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
+                Meteor.call "removePlayer",
+                    gameid: Session.get("gameid")
+                    playerid: Session.get("playerid")
         'click .oldname': (evt) ->
             $("#playername").val(evt.currentTarget.innerText)
     
     Template.play.events
         'click #reset': (evt) ->
-            LiveGames.update Session.get("gameid"), {$pull: {players: id: Session.get("playerid")}}
+            Meteor.call "removePlayer",
+                gameid: Session.get("gameid")
+                playerid: Session.get("playerid")
     
     Template.question.helpers
         timer: -> getGame().timer
@@ -60,9 +85,11 @@ if Meteor.isClient
             selectedAnswer = evt.currentTarget.dataset.original
             answerList = Template.currentData().answers
             answer = answerList.indexOf(selectedAnswer)
-            modifier = $push: {}
-            modifier.$push["answers.#{getGame().question}"] = {id: Session.get("playerid"), answer: answer}
-            LiveGames.update Session.get("gameid"), modifier
+            Meteor.call "answer",
+                playerid: Session.get("playerid")
+                question: getGame().question
+                gameid: Session.get("gameid")
+                answer: answer
             no
     
     correct = -> _.filter(_.zip(_(getQuiz().questions).pluck("correctAnswer"), _.map(getGame().answers, (list) -> _.findWhere(list, id: Session.get("playerid"))?.answer)), ([correct, mine]) -> mine? and correct? and correct is mine).length
