@@ -102,12 +102,12 @@ if Meteor.isClient
             here = Router.current().url
             if here.indexOf("http") is -1
                 here = location.origin + here
-            here.replace("host", "play")
+            here.replace(/\/host/, "/play")
         encplayurl: ->
             here = Router.current().url
             if here.indexOf("http") is -1
                 here = location.origin + here
-            encodeURIComponent here.replace("host", "play")
+            encodeURIComponent here.replace(/\/host/, "/play")
         count: -> getGameField("players").length
         gamename: makeProxy "name"
         description: makeProxy "description"
