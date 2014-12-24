@@ -1,5 +1,5 @@
 Router.route "/host/:shortid", ->
-    @wait Meteor.subscribe "quizPlay", @params.shortid
+    @wait Meteor.subscribe "quizHost", @params.shortid
     
     if @ready()
         @layout ""

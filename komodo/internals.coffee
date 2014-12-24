@@ -111,8 +111,13 @@ if Meteor.isServer
     Meteor.publish "allQuizzes", -> Quizzes.find owner: @userId
     Meteor.publish "quiz", (id) -> Quizzes.find id
     Meteor.publish "gameIDs", -> LiveGames.find({}, {fields: shortid: 1})
-    Meteor.publish "quizPlay", (shortid) ->
+    Meteor.publish "quizHost", (shortid) ->
         check(shortid, String)
         game = LiveGames.findOne({shortid: shortid})
         quizId = game.quiz
         return [Quizzes.find(quizId), LiveGames.find({shortid: shortid})]
+    Meteor.publish "quizPlay", (shortid) ->
+        check(shortid, String)
+        game = LiveGames.findOne({shortid: shortid})
+        quizId = game.quiz
+        return [Quizzes.find(quizId), LiveGames.find({shortid: shortid}, {fields: answers: 0})]
