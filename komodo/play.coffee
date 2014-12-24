@@ -13,10 +13,12 @@ Meteor.methods
         LiveGames.update gameid, {$push: players: {id: playerid, name: name, score: 0}}
     removePlayer: ({playerid, gameid}) ->
         LiveGames.update gameid, {$pull: {players: id: playerid}}
-    answer: ({playerid, gameid, question, answer}) ->
+    answer: ({playerid, gameid, answer}) ->
+        {revealed, timer, players, quiz, question} = LiveGames.findOne(gameid)
+        if revealed
+            throw new Error("Tried to answer a question that was already revealed!")
         modifier = $push: {}, $inc: {}
         modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
-        {timer, players, quiz, question} = LiveGames.findOne(gameid)
         quiz = Quizzes.findOne(quiz)
         question = quiz.questions[question]
         if _.isNumber(question.correctAnswer)
@@ -100,7 +102,6 @@ if Meteor.isClient
             answer = answerList.indexOf(selectedAnswer)
             Meteor.call "answer",
                 playerid: Session.get("playerid")
-                question: getGame().question
                 gameid: Session.get("gameid")
                 answer: answer
             Session.set "answered", yes
