@@ -120,4 +120,4 @@ if Meteor.isServer
         check(shortid, String)
         game = LiveGames.findOne({shortid: shortid})
         quizId = game.quiz
-        return [Quizzes.find(quizId), LiveGames.find({shortid: shortid}, {fields: answers: 0})]
+        return [Quizzes.find(quizId), LiveGames.find({shortid: shortid}, {fields: answers: 0, players: 0})]

@@ -13,6 +13,8 @@ Meteor.methods
         LiveGames.update gameid, {$push: players: {id: playerid, name: name, score: 0}}
     removePlayer: ({playerid, gameid}) ->
         LiveGames.update gameid, {$pull: {players: id: playerid}}
+    getPlayer: ({playerid, gameid}) ->
+        _.findWhere LiveGames.findOne(gameid).players, id: playerid
     answer: ({playerid, gameid, answer}) ->
         {revealed, timer, players, quiz, question} = LiveGames.findOne(gameid)
         if revealed
@@ -21,14 +23,15 @@ Meteor.methods
         modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
         quiz = Quizzes.findOne(quiz)
         question = quiz.questions[question]
-        if _.isNumber(question.correctAnswer)
-            if question.correctAnswer is answer
-                i = (i for val, i in players when val.id is playerid)[0]
-                value = if _.isNumber(question.value) then question.value else 1000
-                timeScale = 1
-                if _.isNumber(question.time)
-                    timeScale = timer / question.time
-                modifier.$inc["players.#{i}.score"] = Math.floor(value * timeScale)
+        unless @isSimulation
+            if _.isNumber(question.correctAnswer)
+                if question.correctAnswer is answer
+                    i = (i for val, i in players when val.id is playerid)[0]
+                    value = if _.isNumber(question.value) then question.value else 1000
+                    timeScale = 1
+                    if _.isNumber(question.time)
+                        timeScale = timer / question.time
+                    modifier.$inc["players.#{i}.score"] = Math.floor(value * timeScale)
         LiveGames.update gameid, modifier
     getAnswer: ({playerid, gameid, question}) ->
         list = LiveGames.findOne(gameid).answers[question]
@@ -42,7 +45,6 @@ Meteor.methods
 if Meteor.isClient
     getGame = -> LiveGames.findOne Session.get "gameid"
     getQuiz = -> Quizzes.findOne getGame().quiz
-    getMe = -> _.findWhere getGame().players, id: Session.get("playerid")
     
     makeProxy = (attr) -> ->
         if Template.currentData()[attr]?
@@ -50,8 +52,17 @@ if Meteor.isClient
         else
             Quizzes.findOne(Template.currentData().quiz)[attr]
     
-    Template.registerHelper "playername", ->
-        getMe()?.name
+    updateScore = ->
+        Meteor.call "getPlayer",
+            playerid: Session.get("playerid")
+            gameid: Session.get("gameid")
+        , (error, me) ->
+            if error?
+                console.log error
+            Session.set "playername", me?.name
+            Session.set "score", me?.score
+    
+    Template.registerHelper "playername", -> Session.get("playername")
     
     Template.fancycountdown.rendered = ->
         Session.set "answered", no
@@ -71,6 +82,7 @@ if Meteor.isClient
         'click #accept': (evt) ->
             localStorage.setItem "oldnames", JSON.stringify _.compact _.union [$("#playername").val()], JSON.parse localStorage.getItem "oldnames"
             Session.setDefault("playerid", Math.random())
+            Session.set("playername", $("#playername").val())
             Meteor.call "removePlayer",
                 gameid: Session.get("gameid")
                 playerid: Session.get("playerid")
@@ -88,6 +100,7 @@ if Meteor.isClient
     
     Template.play.events
         'click #reset': (evt) ->
+            Session.set "playername"
             Meteor.call "removePlayer",
                 gameid: Session.get("gameid")
                 playerid: Session.get("playerid")
@@ -107,7 +120,7 @@ if Meteor.isClient
             Session.set "answered", yes
             no
     
-    correct = ->
+    updateCorrect = ->
         correctAnswers = _(getQuiz().questions).pluck("correctAnswer")
         Meteor.call "getAnswers",
             playerid: Session.get("playerid")
@@ -117,12 +130,14 @@ if Meteor.isClient
             wasCorrect = ([correct, mine]) -> mine? and correct? and correct is mine
             correctAnswersIHad = _.filter(correctAndMyAnswers, wasCorrect)
             Session.set "correct", correctAnswersIHad.length
-    total = -> _(getQuiz().questions).chain().pluck("correctAnswer").filter(_.isNumber).value().length
+    getTotal = -> _(getQuiz().questions).chain().pluck("correctAnswer").filter(_.isNumber).value().length
     
-    Template.results.rendered = correct
+    Template.results.rendered = ->
+        updateCorrect()
+        updateScore()
     
     Template.results.helpers
         correct: -> Session.get "correct"
-        total: total
-        pct: -> Math.round(10000*Session.get("correct")/total())/100
-        score: -> getMe().score
+        total: getTotal
+        pct: -> Math.round(10000*Session.get("correct")/getTotal())/100
+        score: -> Session.get "score"
