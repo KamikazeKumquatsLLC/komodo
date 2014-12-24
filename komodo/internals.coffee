@@ -75,7 +75,7 @@ if Meteor.isServer
         fetch: []
     
     LiveGames.allow
-        update: (userId, doc, fields, modifier) -> (userId is doc.owner) or _.without(fields, "players", "answers").length is 0
+        update: (userId, doc, fields, modifier) -> (userId is doc.owner)# or _.without(fields, "players").length is 0
         remove: (userId, doc) -> userId is doc.owner
         fetch: []
     

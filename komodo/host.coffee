@@ -98,21 +98,7 @@ if Meteor.isClient
     Template.hostquestion.events
         "click #reveal": (evt) ->
             gameid = getGame()._id
-            modifier = $inc: {}
-            # modifier.$push["answers.#{getGame().question}"] = {id: Session.get("playerid"), answer: answer}
-            # LiveGames.update gameid, $set:
-            index = getQuestion().correctAnswer
-            tmp = _.chain(getGame().answers[getGame().question])
-            tmp = tmp.where(answer: index)
-            tmp = tmp.map(({id}) -> _.findWhere(getGame().players, id: id))
-            tmp = tmp.compact() # remove falsy values
-            # now tmp.value() is the list of all the players who answered right
-            tmp = tmp.map (x) -> (i for val, i in getGame().players when _.isEqual(x, val))[0]
-            # now tmp.value() is the index of each player who answered right
-            tmp.each (i) -> modifier.$inc["players.#{i}.score"] = 1
-            modifier.$set = revealed: yes
-            # console.log modifier
-            LiveGames.update gameid, modifier
+            LiveGames.update gameid, $set: revealed: yes
         "click #advance": (evt) ->
             gameid = getGame()._id
             LiveGames.update gameid, $set: {revealed: no, countdown: getGame().countdownlength}
