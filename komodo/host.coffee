@@ -31,7 +31,6 @@ Meteor.methods
             newQuestion = game.question + 1
             LiveGames.update gameid, {$inc: {question: 1}, $push: {answers: []}}
             questionData = Quizzes.findOne(game.quiz).questions[newQuestion]
-            console.log JSON.stringify questionData
             set = {}
             set["questionData.#{newQuestion}"] = _.omit questionData, "correctAnswer"
             LiveGames.update gameid, $set: set
