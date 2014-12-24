@@ -95,6 +95,7 @@ if Meteor.isClient
                 Meteor.call "removePlayer",
                     gameid: Session.get("gameid")
                     playerid: Session.get("playerid")
+                Session.set "playername"
         'click .oldname': (evt) ->
             $("#playername").val(evt.currentTarget.innerText)
     
