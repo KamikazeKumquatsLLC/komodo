@@ -90,6 +90,11 @@
 
 <template name="reviewAnswer">
     <h1>You answered the question!</h1>
+    {{#if canUnanswer}}
+        <p>
+            <button class="btn btn-warning" id="unanswer"><i class="fa fa-undo"></i> Undo</button>
+        </p>
+    {{/if}}
 </template>
 
 <template name="reviewNonAnswer">

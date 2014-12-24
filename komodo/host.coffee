@@ -16,7 +16,10 @@ Meteor.methods
         unless @isSimulation
             unless countdowns[gameid]
                 game = LiveGames.findOne(gameid)
-                LiveGames.update gameid, $set: {revealed: no, countdown: game.countdownlength}
+                LiveGames.update gameid,
+                    $set: {revealed: no, countdown: game.countdownlength}
+                    $inc: question: 1
+                    $push: answers: []
                 update = ->
                     LiveGames.update gameid, $inc: countdown: -1
                     if LiveGames.findOne(gameid).countdown <= 0
@@ -28,11 +31,10 @@ Meteor.methods
             Meteor.clearInterval countdowns[gameid]
             countdowns[gameid] = undefined
             game = LiveGames.findOne(gameid)
-            newQuestion = game.question + 1
-            LiveGames.update gameid, {$inc: {question: 1}, $push: {answers: []}}
-            questionData = Quizzes.findOne(game.quiz).questions[newQuestion]
+            {quiz, question} = game
+            questionData = Quizzes.findOne(quiz).questions[question]
             set = {}
-            set["questionData.#{newQuestion}"] = _.omit questionData, "correctAnswer"
+            set["questionData.#{question}"] = _.omit questionData, "correctAnswer"
             LiveGames.update gameid, $set: set
             Meteor.call "startTimer", gameid
         no
@@ -87,10 +89,17 @@ if Meteor.isClient
     
     Meteor.startup ->
         Tracker.autorun (comp) ->
-            game = getGameFields ["revealed", "question", "questionData"]
+            game = getGameFields ["revealed", "question", "questionData", "players"]
             return unless game?
-            {revealed, question, questionData} = game
+            {revealed, question, questionData, players} = game
             if revealed
+                modifier = $inc: {}, $set: {}
+                _(players).chain()
+                          .filter(({tmpscore}) -> tmpscore > 0)
+                          .each ({tmpscore}, i) ->
+                              modifier.$inc["players.#{i}.score"] = tmpscore
+                              modifier.$set["players.#{i}.tmpscore"] = 0
+                LiveGames.update game._id, modifier
                 unless _.isNumber questionData[question].correctAnswer
                     if _.isNumber getQuestion().correctAnswer
                         set = {}
