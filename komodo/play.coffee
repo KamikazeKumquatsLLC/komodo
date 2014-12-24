@@ -25,8 +25,8 @@ Meteor.methods
                 value = if _.isNumber(question.value) then question.value else 1000
                 timeScale = 1
                 if _.isNumber(question.time)
-                    timeScale = question.time - timer + 1
-                modifier.$inc["players.#{i}.score"] = value / timeScale
+                    timeScale = timer / question.time
+                modifier.$inc["players.#{i}.score"] = Math.floor(value * timeScale)
         LiveGames.update gameid, modifier
 
 if Meteor.isClient
