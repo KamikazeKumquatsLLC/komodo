@@ -16,12 +16,17 @@ Meteor.methods
     answer: ({playerid, gameid, question, answer}) ->
         modifier = $push: {}, $inc: {}
         modifier.$push["answers.#{question}"] = {id: playerid, answer: answer}
-        {players, quiz, question} = LiveGames.findOne(gameid)
+        {timer, players, quiz, question} = LiveGames.findOne(gameid)
         quiz = Quizzes.findOne(quiz)
-        if _.isNumber(quiz.questions[question].correctAnswer)
-            if quiz.questions[question].correctAnswer is answer
+        question = quiz.questions[question]
+        if _.isNumber(question.correctAnswer)
+            if question.correctAnswer is answer
                 i = (i for val, i in players when val.id is playerid)[0]
-                modifier.$inc["players.#{i}.score"] = 1
+                value = if _.isNumber(question.value) then question.value else 1000
+                timeScale = 1
+                if _.isNumber(question.time)
+                    timeScale = question.time - timer + 1
+                modifier.$inc["players.#{i}.score"] = value / timeScale
         LiveGames.update gameid, modifier
 
 if Meteor.isClient
