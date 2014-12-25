@@ -117,9 +117,36 @@ if Meteor.isClient
             if here.indexOf("http") is -1
                 here = location.origin + here
             encodeURIComponent here.replace(/\/host/, "/play")
-        count: -> getGameField("players").length
         gamename: makeProxy "name"
         description: makeProxy "description"
+    
+    Template.playerlist.helpers
+        count: -> getGameField("players").length
+        editing: -> Session.equals "editing", Template.currentData().id
+    
+    Template.playerlist.events
+        "click .kick": (evt) ->
+            playerId = parseFloat evt.currentTarget.parentElement.dataset.id
+            LiveGames.update getGameField("_id"), $pull: players: id: playerId
+        "click .regen": (evt) ->
+            playerId = parseFloat evt.currentTarget.parentElement.dataset.id
+            {_id, players} = getGameFields(["players", "_id"])
+            index = (i for val, i in players when val.id is playerId)[0]
+            modifier = $set: {}
+            modifier.$set["players.#{index}.name"] = SAMPLE_NAMES[Math.floor(Math.random() * SAMPLE_NAMES.length)]
+            LiveGames.update _id, modifier
+        "click .edit": (evt) ->
+            Session.set "editing", parseFloat evt.currentTarget.parentElement.dataset.id
+        "keyup .name-input": (evt) ->
+            if evt.keyCode is 13
+                playerId = parseFloat evt.currentTarget.dataset.id
+                newName = $(evt.target).val()
+                {_id, players} = getGameFields(["players", "_id"])
+                index = (i for val, i in players when val.id is playerId)[0]
+                modifier = $set: {}
+                modifier.$set["players.#{index}.name"] = newName
+                LiveGames.update _id, modifier
+                Session.set "editing"
     
     Template.hostquestion.helpers
         numAnswers: -> getAnswers().length
