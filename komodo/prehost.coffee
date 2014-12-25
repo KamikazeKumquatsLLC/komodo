@@ -16,7 +16,12 @@ Meteor.methods
         shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
         while LiveGames.findOne({shortid: shortid})?
             shortid = Math.floor(Math.random() * Math.pow(10, SHORTID_DIGITS))
-        overrides = shortid: "#{shortid}", players: [], answers: [[]], owner: @userId
+        overrides =
+            shortid: "#{shortid}"
+            players: []
+            answers: [[]]
+            owner: @userId
+            purgeby: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         LiveGames.insert _.extend options, overrides
         return shortid
 
