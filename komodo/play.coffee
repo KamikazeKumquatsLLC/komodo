@@ -1,3 +1,7 @@
+Router.route "/play", ->
+    @layout ""
+    @render "find"
+
 Router.route "/play/:shortid", ->
     @wait Meteor.subscribe "quizPlay", @params.shortid
     
@@ -6,6 +10,7 @@ Router.route "/play/:shortid", ->
         Session.set "gameid", LiveGames.findOne(shortid: @params.shortid)._id
         @render "play", data: -> LiveGames.findOne shortid: @params.shortid
     else
+        @layout ""
         @render "loading"
 
 Meteor.methods
@@ -90,6 +95,14 @@ if Meteor.isClient
     
     Template.fancycountdown.rendered = ->
         Session.set "answer"
+    
+    Template.find.events
+        "click #playshortid": ->
+            shortid = $("#shortid").val()
+            Router.go "/play/#{shortid}"
+        "keyup #shortid": (evt) ->
+            if evt.keyCode is 13
+                $("#playshortid").click()
     
     Template.play.helpers
         currentQuestion: -> getQuiz().questions[getGame().question]

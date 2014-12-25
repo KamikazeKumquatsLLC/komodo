@@ -1,3 +1,21 @@
+<template name="find">
+    <div class="container-fluid">
+        <row>
+            <h2 class="col-xs-4 col-xs-offset-4 text-center">Game ID:</h2>
+        </row>
+        <row>
+            <div class="col-xs-4 col-xs-offset-4">
+                <div class="input-group">
+                    <input type="text" class="form-control input-lg" placeholder="e.g. 313370" id="shortid">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default btn-lg" type="button" id="playshortid"><i class="fa fa-play fa-lg"></i></button>
+                    </span>
+                </div>
+            </div>
+        </row>
+    </div>
+</template>
+
 <template name="play">
     <div class="container-fluid">
         {{#if .}}
