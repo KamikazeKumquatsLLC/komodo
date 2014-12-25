@@ -30,6 +30,9 @@ if Meteor.isClient
         "click #playshortid": ->
             shortid = $("#shortid").val()
             Router.go "/play/#{shortid}"
+        "keyup #shortid": (evt) ->
+            if evt.keyCode is 13
+                $("#playshortid").click()
     
     Template.play.helpers
         currentQuestion: -> getQuiz().questions[getGame().question]
