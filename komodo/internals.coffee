@@ -96,18 +96,17 @@ if Meteor.isServer
             ]
         return user
     Meteor.startup ->
-        ###
-        if Quizzes.find({}).count() is 0
-            Quizzes.insert
-                "description":"A sample quiz of awesomeness."
-                "lastmod":new Date()
-                "name":"hi"
-                "questions": [
-                    {"text":"Do you know that Komodo exists?","answers":["No","Yes"],"correctAnswer":1}
-                    {"text":"Do you know how it works?","answers":["No","Yes"]}
-                    {"text":"There's always more to learn."}
-                ]
-        ###
+        # find everything without a purge date
+        selector = purgeby: $exists: no
+        # set its purge date to a week from now
+        modifier = $set: purgeby: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        LiveGames.update selector, modifier
+        
+        Meteor.setInterval ->
+            oldGamesSelector = purgeby: $lte: new Date()
+            LiveGames.remove oldGamesSelector
+        , 10000
+        
     Meteor.publish "allQuizzes", -> Quizzes.find owner: @userId
     Meteor.publish "quiz", (id) -> Quizzes.find id
     Meteor.publish "gameIDs", -> LiveGames.find({}, {fields: shortid: 1})
