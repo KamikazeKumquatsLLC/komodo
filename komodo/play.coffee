@@ -104,6 +104,9 @@ if Meteor.isClient
         'click #generate': (evt) ->
             index = Math.floor(Math.random() * SAMPLE_NAMES.length)
             $("#playername").val(SAMPLE_NAMES[index])
+        "keyup #playername": (evt) ->
+            if evt.keyCode is 13
+                $("#accept").click()
         'click #accept': (evt) ->
             localStorage.setItem "oldnames", JSON.stringify _.compact _.union [$("#playername").val()], JSON.parse localStorage.getItem "oldnames"
             Session.setDefault("playerid", Math.random())
