@@ -62,12 +62,13 @@ if Meteor.isClient
         questionEditor = ace.edit "questionEdit"
         questionEditor.setTheme("ace/theme/clouds")
         questionEditor.getSession().setMode("ace/mode/markdown")
-        questionEditor.getSession().on "change", (evt) ->
-            unless locked
+        questionEditor.getSession().on "change", _.debounce (evt) ->
+            if questionEditor.getValue() isnt getQuestion().text
                 locked = yes
                 setOperator = lastmod: new Date()
                 setOperator["questions.#{Session.get("selectedQuestion")}.text"] = questionEditor.getValue()
                 Quizzes.update getQuiz()._id, $set: setOperator
+        , 500
         
         Tracker.autorun ->
             unless locked
