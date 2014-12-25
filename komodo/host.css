@@ -13,3 +13,33 @@
 .timer, .answer-count {
     margin-right: 0.5em;
 }
+
+.player-card {
+    margin: 15px;
+    width: 28%;
+    padding: 15px;
+}
+
+.actions {
+    background-color: rgba(245, 245, 245, 0.9);
+}
+
+.card-wrapper .overlay {
+    display: none;
+}
+
+.card-wrapper:hover .overlay {
+    display: block;
+}
+
+.overlay, .base {
+    padding: 6px 12px;
+    height: 34px;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    padding-right: 30px;
+    padding-left: 0px;
+}
