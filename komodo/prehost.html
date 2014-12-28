@@ -32,6 +32,26 @@
                         <input type="checkbox" id="inputShowGuessers" checked>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="inputTeams" class="col-sm-4 control-label">Divide players into teams?</label>
+                    <div class="col-sm-8 checkbox">
+                        <input type="checkbox" id="inputTeams" data-toggle="collapse" data-target="#team-shenanigans">
+                    </div>
+                </div>
+                <div class="collapse" id="team-shenanigans">
+                    <div class="form-group">
+                        <label for="inputNumTeams" class="col-sm-4 control-label">Number of teams</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="2" max="10" step="1" class="form-control" id="inputNumTeams">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTeamSize" class="col-sm-4 control-label">Number of players per team</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="2" step="1" class="form-control" id="inputTeamSize">
+                        </div>
+                    </div>
+                </div>
                 <button class="btn btn-warning btn-block" type="button" data-toggle="collapse" data-target="#advancedSettings">Advanced settings (changing these will cause strange things to happen)</button>
                 <div class="collapse" id="advancedSettings">
                     <div class="form-group">

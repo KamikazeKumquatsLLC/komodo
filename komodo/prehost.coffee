@@ -35,6 +35,9 @@ if Meteor.isClient
             showGuessers = $("#inputShowGuessers:checked").length is 1
             allowLateAnswers = $("#inputAllowLateAnswers:checked").length is 1
             revealWithAllAnswers = $("#inputRevealWithAllAnswers:checked").length is 1
+            teams = $("#inputTeams:checked").length is 1
+            numTeams = parseInt $("#inputNumTeams").val()
+            teamSize = parseInt $("#inputTeamSize").val()
             if countdown < 0 or countdown isnt parseInt "#{countdown}"
                 console.log "Stuff broke!"
                 countdown = 5
@@ -46,6 +49,10 @@ if Meteor.isClient
                 showGuessers: showGuessers
                 allowLateAnswers: allowLateAnswers
                 revealWithAllAnswers: revealWithAllAnswers
+                teams:
+                    use: teams
+                    num: numTeams
+                    size: teamSize
             Meteor.call "host", options, (err, shortid) ->
                 unless err
                     Router.go "/host/#{shortid}"
