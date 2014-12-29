@@ -1,3 +1,20 @@
-.checkbox input[type="checkbox"] {
+.checkbox-fix input[type="checkbox"] {
     margin-left: 0px;
+}
+
+.form-control-inline {
+    width: 6rem;
+    display: inline-block;
+}
+
+#inputTeams ~ .numTeams, #inputTeams ~ .both, #inputTeams ~ .teamSize {
+    display: none;
+}
+
+#inputTeams:checked ~ .nothing {
+    display: none;
+}
+
+#inputTeams:checked ~ .numTeams, #inputTeams:checked ~ .both, #inputTeams:checked ~ .teamSize {
+    display: inline;
 }

@@ -27,17 +27,27 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputShowGuessers" class="col-sm-4 control-label">Show who guessed which answer?</label>
-                    <div class="col-sm-8 checkbox">
+                    <label for="inputShowGuessers" class="col-sm-4 control-label">Show who guessed which answer</label>
+                    <div class="col-sm-8 checkbox checkbox-fix">
                         <input type="checkbox" id="inputShowGuessers" checked>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputTeams" class="col-sm-4 control-label">Divide players into teams?</label>
-                    <div class="col-sm-8 checkbox">
-                        <input type="checkbox" id="inputTeams" data-toggle="collapse" data-target="#team-shenanigans">
+                    <div class="col-sm-8 col-sm-offset-4">
+                        <label>
+                            <input type="checkbox" id="inputTeams"> Divide players into
+                            <span class="nothing">teams</span>
+                            <span class="numTeams">
+                                <input type="number" min="2" max="10" step="1" class="form-control form-control-inline" id="inputNumTeams"> teams
+                            </span>
+                            <span class="both"> / </span>
+                            <span class="teamSize">
+                                teams of <input type="number" min="2" step="1" class="form-control form-control-inline" id="inputTeamSize">
+                            </span>
+                        </label>
                     </div>
                 </div>
+                <!--
                 <div class="collapse" id="team-shenanigans">
                     <div class="form-group">
                         <label for="inputNumTeams" class="col-sm-4 control-label">Number of teams</label>
@@ -52,6 +62,7 @@
                         </div>
                     </div>
                 </div>
+                -->
                 <button class="btn btn-warning btn-block" type="button" data-toggle="collapse" data-target="#advancedSettings">Advanced settings (changing these will cause strange things to happen)</button>
                 <div class="collapse" id="advancedSettings">
                     <div class="form-group">
