@@ -26,7 +26,22 @@ Meteor.methods
         return shortid
 
 if Meteor.isClient
+    updateSegments = ->
+        numTeamsUsed = $("#inputNumTeams").val() isnt ""
+        teamSizeUsed = $("#inputTeamSize").val() isnt ""
+        if numTeamsUsed
+            $(".numTeams").attr("style", "")
+            $(".teamSize").hide()
+        else if teamSizeUsed
+            $(".teamSize").attr("style", "")
+            $(".numTeams").hide()
+        else
+            $(".numTeams").attr("style", "")
+            $(".teamSize").attr("style", "")
+    
     Template.prehost.events
+        "keyup #inputNumTeams": updateSegments
+        "keyup #inputTeamSize": updateSegments
         'click #begin': (evt) ->
             id = Router.current().params.id
             name = $("#inputName").val()

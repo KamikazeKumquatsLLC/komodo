@@ -15,6 +15,6 @@
     display: none;
 }
 
-#inputTeams:checked ~ .numTeams, #inputTeams:checked ~ .both, #inputTeams:checked ~ .teamSize {
+#inputTeams:checked ~ .numTeams, #inputTeams:checked ~ .teamSize {
     display: inline;
 }
