@@ -38,28 +38,36 @@
 <template name="playerlist">
     <h1>Players ({{count}})</h1>
     <div class="row">
-        {{#each players}}
-            <div class="card-wrapper">
-                <div class="well well-sm col-sm-4 text-center player-card">
-                    {{#if editing}}
-                        <input type="text" class="name-input form-control" value="{{name}}" data-id="{{id}}">
-                    {{else}}
-                        <div class="overlay">
-                            <div class="actions" data-id="{{id}}">
-                                <button class="kick btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
-                                <button class="regen btn btn-xs btn-info"><i class="fa fa-repeat"></i></button>
-                                <button class="edit btn btn-xs btn-success"><i class="fa fa-pencil"></i></button>
-                            </div>
-                        </div>
-                        <div class="base">
-                            <div class="content">
-                                {{name}}
-                            </div>
-                        </div>
-                    {{/if}}
+        {{#if teams}}
+            {{#each teams}}
+                <div class="team" style="background-color: #{{color.hex}}">
+                    Hi!
                 </div>
-            </div>
-        {{/each}}
+            {{/each}}
+        {{else}}
+            {{#each players}}
+                <div class="card-wrapper">
+                    <div class="well well-sm col-sm-4 text-center player-card">
+                        {{#if editing}}
+                            <input type="text" class="name-input form-control" value="{{name}}" data-id="{{id}}">
+                        {{else}}
+                            <div class="overlay">
+                                <div class="actions" data-id="{{id}}">
+                                    <button class="kick btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                                    <button class="regen btn btn-xs btn-info"><i class="fa fa-repeat"></i></button>
+                                    <button class="edit btn btn-xs btn-success"><i class="fa fa-pencil"></i></button>
+                                </div>
+                            </div>
+                            <div class="base">
+                                <div class="content">
+                                    {{name}}
+                                </div>
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
     </div>
 </template>
 

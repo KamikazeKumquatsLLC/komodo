@@ -123,6 +123,7 @@ if Meteor.isClient
     Template.playerlist.helpers
         count: -> getGameField("players").length
         editing: -> Session.equals "editing", Template.currentData().id
+        teams: -> _.map COLORS, (x) -> {colors: x}
     
     Template.playerlist.events
         "click .kick": (evt) ->
